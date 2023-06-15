@@ -37,7 +37,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         set {
             queue.sync {
                 _heartbeatCounter = newValue
-                if _heartbeatCounter > 10 {
+                if _heartbeatCounter > 4 {
                     onDisconnect()
                 }
             }
@@ -45,6 +45,8 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     private var reconnectTimer: Timer?
+    
+    private var cacheString: String?
     
     deinit {
         heartbeatTimer?.invalidate()
@@ -61,24 +63,31 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     func sendStartMessage(_ templateModels: [TemplateModel]) {
-        guard templateModels.count > 0, clientSocket.isConnected else { return }
+        guard clientSocket.isConnected else { return }
         
         let ids = templateModels.map { $0.id }
-        let idsString = ids.joined(separator: ",")
         
-        guard idsString.count > 0 else { return }
+        // 分批发送
+        let batchSize = 10
+        var remainingIDs = ids
+        while !remainingIDs.isEmpty {
+            let batch = Array(remainingIDs.prefix(batchSize))
+            remainingIDs.removeFirst(min(batchSize, remainingIDs.count))
+            sendStartMessageBatch(batch)
+        }
+    }
+
+    func sendStartMessageBatch(_ ids: [String]) {
+        guard !ids.isEmpty else { return }
+        
+        let idsString = ids.joined(separator: ",")
         
         let startMessage = [
             "type": MessageType.start.rawValue,
             "ids": idsString
         ]
         
-        if let startData = convertToJsonData(jsonObject: startMessage) {
-            clientSocket.write(startData, withTimeout: -1, tag: 2)
-            if let jsonString = NSString(data: startData, encoding: String.Encoding.utf8.rawValue) as String? {
-                print(jsonString)
-            }
-        }
+        write(startMessage, tag: 2)
     }
     
     private func convertToJsonData(jsonObject: Any) -> Data? {
@@ -114,9 +123,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         
         weak var weakSelf = self
         heartbeatTimer = .scheduledTimer(withTimeInterval: 30, repeats: true, block: { _ in
-            if let data = weakSelf?.convertToJsonData(jsonObject: [ "type" : MessageType.heartbeat.rawValue]) {
-                weakSelf?.clientSocket.write(data, withTimeout: -1, tag: 1)
-            }
+            weakSelf?.write([ "type" : MessageType.heartbeat.rawValue], tag: 1)
         })
     }
     
@@ -128,7 +135,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     private func scheduleReconnectTimer() {
         invalidateReconnectTimer()
         weak var weakSelf = self
-        reconnectTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { _ in
+        reconnectTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { _ in
             weakSelf?.connectToServer()
         })
     }
@@ -152,6 +159,14 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             onFinish(message)
         default:
             break
+        }
+    }
+    
+    private func write(_ jsonObject: [String: String], tag: Int) {
+        if let jsonString = convertToJsonString(jsonObject: jsonObject) {
+            print(jsonString)
+            let message = jsonString + "end_youkun_fengexian"
+            clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: tag)
         }
     }
     
@@ -193,17 +208,25 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
 //        print("didRead:\(tag)")
         var jsonStrings = [String]()
-        if let dataString = String(data: data, encoding: .utf8) {
-            let jsonComponents = dataString.components(separatedBy: "}{")
+
+        if var dataString = String(data: data, encoding: .utf8) {
+            if let cacheString = cacheString {
+                dataString = cacheString + dataString
+                self.cacheString = nil
+            }
+            let jsonComponents = dataString.components(separatedBy: "youkun_fengexian")
             for component in jsonComponents {
                 var jsonString = component
-                if !jsonString.hasPrefix("{") {
-                    jsonString.insert("{", at: jsonString.startIndex)
+                if jsonString.hasSuffix("end_") {
+                    let startIndex = jsonString.startIndex
+                    let endIndex = jsonString.index(jsonString.endIndex, offsetBy: -4)
+                    jsonString = String(jsonString[startIndex..<endIndex])
+                    jsonStrings.append(jsonString)
+                } else {
+                    cacheString = jsonString
+                    print(jsonString)
                 }
-                if !jsonString.hasSuffix("}") {
-                    jsonString.append("}")
-                }
-                jsonStrings.append(jsonString)
+                
             }
         }
         for jsonString in jsonStrings {

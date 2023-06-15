@@ -24,11 +24,18 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         importManager.delegate = self
         socketManager.delegate = self
         cacheManager.setup()
-        
+
         templateModels = cacheManager.select()
         tableView.reloadData()
     }
     
+    private func sendStartMessage() {
+        guard needResendStartMessage else { return }
+        needResendStartMessage = false
+        socketManager.connectToServer()
+        socketManager.sendStartMessage(templateModels.filter({ $0.state == .ready }))
+    }
+// MARK: - IBAction
     @IBAction func onImport(_ sender: Any) {
         importManager.importFromFile()
     }
@@ -42,6 +49,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         exportManager.exprot(templateModels)
     }
     
+// MARK: - ImportManagerDelegate
     func importDidFinish(_ data: [String]) {
         let templateModels = data.map { id in
             TemplateModel(id: id)
@@ -51,7 +59,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         self.templateModels = cacheManager.select()
         tableView.reloadData()
     }
-    
+// MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = .inProgress
@@ -64,6 +72,11 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
            let success = (message["success"] as? NSString)?.boolValue,
            let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = success ? .success : .failed
+            templateModel.useMotage = (message["useMotage"] as? NSString)?.boolValue ?? false
+            templateModel.startMemory = (message["startMemory"] as? NSString)?.integerValue ?? -1
+            templateModel.endMemory = (message["endMemory"] as? NSString)?.integerValue ?? -1
+            templateModel.maxMemory = (message["maxMemory"] as? NSString)?.integerValue ?? -1
+            templateModel.duration = (message["duration"] as? NSString)?.integerValue ?? -1
             templateModel.errorMsg = message["error_msg"]
             templateModel.filePath = message["file_path"]
             
@@ -78,24 +91,19 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     }
     
     func onDisconnect() {
+        needResendStartMessage = true
+        
         launchManager.launch()
         let inProgressTemplateModels = templateModels.filter { $0.state == .inProgress }
         inProgressTemplateModels.forEach {
             $0.state = .failed
+            $0.errorMsg = "crash"
             cacheManager.update($0)
         }
         
         tableView.reloadData()
-        needResendStartMessage = true
     }
-    
-    private func sendStartMessage() {
-        guard needResendStartMessage else { return }
-        needResendStartMessage = false
-        socketManager.connectToServer()
-        socketManager.sendStartMessage(templateModels.filter({ $0.state == .ready }))
-    }
-    
+// MARK: - NSTableViewDelegate
     func numberOfRows(in tableView: NSTableView) -> Int {
         return templateModels.count
     }

@@ -13,6 +13,11 @@ class CacheManager: NSObject {
     private let tableName = "my_table"
     private let idColomnName = "id"
     private let stateColomnName = "state"
+    private let useMotageColomnName = "use_motage"
+    private let startMemoryColomnName = "start_memory"
+    private let endMemoryColomnName = "end_memory"
+    private let maxMemoryColomnName = "max_memory"
+    private let durationColomnName = "duration"
     private let errorColomnName = "error_msg"
     private let filePathColomnName = "file_path"
     
@@ -46,6 +51,11 @@ class CacheManager: NSObject {
         CREATE TABLE IF NOT EXISTS \(tableName) (
             \(idColomnName) INTEGER PRIMARY KEY,
             \(stateColomnName) INTEGER,
+            \(useMotageColomnName) INTEGER,
+            \(startMemoryColomnName) INTEGER,
+            \(endMemoryColomnName) INTEGER,
+            \(maxMemoryColomnName) INTEGER,
+            \(durationColomnName) INTEGER,
             \(errorColomnName) TEXT,
             \(filePathColomnName) TEXT
         )
@@ -73,17 +83,30 @@ class CacheManager: NSObject {
     func insert(_ templateModel: TemplateModel) {
         let insertSQL = """
         INSERT INTO \(tableName)
-        (\(idColomnName), \(stateColomnName), \(errorColomnName), \(filePathColomnName))
+        (\(idColomnName),
+        \(stateColomnName),
+        \(useMotageColomnName),
+        \(startMemoryColomnName),
+        \(endMemoryColomnName),
+        \(maxMemoryColomnName),
+        \(durationColomnName),
+        \(errorColomnName),
+        \(filePathColomnName))
         VALUES
-        (?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         var insertStatement: OpaquePointer?
 
         if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
             sqlite3_bind_int(insertStatement, 1, (templateModel.id as NSString).intValue)
             sqlite3_bind_int(insertStatement, 2, Int32(templateModel.state.rawValue))
-            sqlite3_bind_text(insertStatement, 3, templateModel.errorMsg ?? "", -1, nil)
-            sqlite3_bind_text(insertStatement, 4, templateModel.filePath ?? "", -1, nil)
+            sqlite3_bind_int(insertStatement, 3, templateModel.useMotage ? 1 : 0)
+            sqlite3_bind_int(insertStatement, 4, Int32(templateModel.startMemory))
+            sqlite3_bind_int(insertStatement, 5, Int32(templateModel.endMemory))
+            sqlite3_bind_int(insertStatement, 6, Int32(templateModel.maxMemory))
+            sqlite3_bind_int(insertStatement, 7, Int32(templateModel.duration))
+            sqlite3_bind_text(insertStatement, 8, templateModel.errorMsg ?? "", -1, nil)
+            sqlite3_bind_text(insertStatement, 9, templateModel.filePath ?? "", -1, nil)
 
             if sqlite3_step(insertStatement) == SQLITE_DONE {
                 print("Successfully inserted row.")
@@ -117,14 +140,30 @@ class CacheManager: NSObject {
     }
     
     func update(_ templateModel: TemplateModel) {
-        let updateSQL = "UPDATE \(tableName) SET \(stateColomnName) = ?, \(errorColomnName) = ?, \(filePathColomnName) = ? WHERE \(idColomnName) = ?"
+        let updateSQL = """
+        UPDATE \(tableName) SET
+        \(stateColomnName) = ?,
+        \(useMotageColomnName) = ?,
+        \(startMemoryColomnName) = ?,
+        \(endMemoryColomnName) = ?,
+        \(maxMemoryColomnName) = ?,
+        \(durationColomnName) = ?,
+        \(errorColomnName) = ?,
+        \(filePathColomnName) = ?
+        WHERE \(idColomnName) = ?
+        """
         var updateStatement: OpaquePointer?
 
         if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
             sqlite3_bind_int(updateStatement, 1, Int32(templateModel.state.rawValue))
-            sqlite3_bind_text(updateStatement, 2, ((templateModel.errorMsg ?? "") as NSString).utf8String , -1, nil)
-            sqlite3_bind_text(updateStatement, 3, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 4, (templateModel.id as NSString).intValue)
+            sqlite3_bind_int(updateStatement, 2, templateModel.useMotage ? 1 : 0)
+            sqlite3_bind_int(updateStatement, 3, Int32(templateModel.startMemory))
+            sqlite3_bind_int(updateStatement, 4, Int32(templateModel.endMemory))
+            sqlite3_bind_int(updateStatement, 5, Int32(templateModel.maxMemory))
+            sqlite3_bind_int(updateStatement, 6, Int32(templateModel.duration))
+            sqlite3_bind_text(updateStatement, 7, ((templateModel.errorMsg ?? "") as NSString).utf8String , -1, nil)
+            sqlite3_bind_text(updateStatement, 8, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 9, (templateModel.id as NSString).intValue)
 
             if sqlite3_step(updateStatement) == SQLITE_DONE {
                 print("Successfully updated row.")
@@ -149,9 +188,14 @@ class CacheManager: NSObject {
                 
                 let templateModel = TemplateModel(id: "\(id)")
                 templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, 1))) ?? .ready
-                let error = String(cString: sqlite3_column_text(selectStatement, 2))
+                templateModel.useMotage = sqlite3_column_int64(selectStatement, 2) == 1
+                templateModel.startMemory = Int(sqlite3_column_int(selectStatement, 3))
+                templateModel.endMemory = Int(sqlite3_column_int(selectStatement, 4))
+                templateModel.maxMemory = Int(sqlite3_column_int(selectStatement, 5))
+                templateModel.duration = Int(sqlite3_column_int(selectStatement, 6))
+                let error = String(cString: sqlite3_column_text(selectStatement, 7))
                 templateModel.errorMsg = error
-                let filePath = String(cString: sqlite3_column_text(selectStatement, 3))
+                let filePath = String(cString: sqlite3_column_text(selectStatement, 8))
                 templateModel.filePath = filePath
                 
                 templateModels.append(templateModel)

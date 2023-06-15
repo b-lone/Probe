@@ -17,6 +17,12 @@ class TemplateModel: NSObject {
     
     var id: String
     var state = State.ready
+    var useMotage = false
+    var startMemory: Int = -1
+    var endMemory: Int = -1
+    var maxMemory: Int = -1
+    var duration: Int = -1
+    
     private var _errorMsg: String?
     var errorMsg: String? {
         get {
@@ -47,6 +53,6 @@ class TemplateModel: NSObject {
     }
     
     override var description: String {
-        return "\(id) \(state) \(errorMsg ?? "-") \(filePath ?? "-")"
+        return "\(id) \(state) \(useMotage) \(startMemory) \(endMemory) \(maxMemory) \(duration) \(errorMsg ?? "-") \(filePath ?? "-")"
     }
 }
