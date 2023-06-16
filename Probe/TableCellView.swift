@@ -21,6 +21,7 @@ class TableCellView: NSTableCellView {
     func setup(_ tempalteModel: TemplateModel) {
         idLabel.stringValue = tempalteModel.id
         stateLabel.stringValue = "\(tempalteModel.state)"
+        stateLabel.textColor = tempalteModel.state.color
         useMotageLabel.stringValue = "\(tempalteModel.useMotage)"
         startMemoryLabel.stringValue = "\(tempalteModel.startMemory)"
         endMemoryLabel.stringValue = "\(tempalteModel.endMemory)"

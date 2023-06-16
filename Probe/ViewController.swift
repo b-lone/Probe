@@ -17,16 +17,36 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     private var needResendStartMessage = true
     
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var progressLabel: NSTextField!
+    @IBOutlet weak var successCountLabel: NSTextField!
+    @IBOutlet weak var failedCountLabel: NSTextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        successCountLabel.textColor = TemplateModel.State.success.color
+        failedCountLabel.textColor = TemplateModel.State.failed.color
         
         importManager.delegate = self
         socketManager.delegate = self
         cacheManager.setup()
 
         templateModels = cacheManager.select()
+        update()
+    }
+    
+    private func update() {
         tableView.reloadData()
+        
+        let totalCount = templateModels.count
+        let finishedTemplateModels = templateModels.filter { $0.state == .failed || $0.state == .success }
+        let finishedCount = finishedTemplateModels.count
+        let successTemplateModels = finishedTemplateModels.filter { $0.state == .success }
+        let successCount = successTemplateModels.count
+        
+        progressLabel.stringValue = "\(finishedCount)/\(totalCount)"
+        successCountLabel.stringValue = "\(successCount)"
+        failedCountLabel.stringValue = "\(finishedCount - successCount)"
     }
     
     private func sendStartMessage() {
@@ -56,14 +76,14 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         }
         cacheManager.createTable(templateModels)
 
-        self.templateModels = cacheManager.select()
-        tableView.reloadData()
+        self.templateModels = templateModels
+        update()
     }
 // MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = .inProgress
-            tableView.reloadData()
+            update()
         }
     }
     
@@ -82,7 +102,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
             
             cacheManager.update(templateModel)
             
-            tableView.reloadData()
+            update()
         }
     }
     
@@ -101,7 +121,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
             cacheManager.update($0)
         }
         
-        tableView.reloadData()
+        update()
     }
 // MARK: - NSTableViewDelegate
     func numberOfRows(in tableView: NSTableView) -> Int {

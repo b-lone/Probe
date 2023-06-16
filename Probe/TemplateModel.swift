@@ -13,6 +13,19 @@ class TemplateModel: NSObject {
         case inProgress = 1
         case success = 2
         case failed = 3
+        
+        var color: NSColor {
+            switch self {
+            case .ready:
+                return .gray
+            case .inProgress:
+                return .blue
+            case .success:
+                return .green
+            case .failed:
+                return .red
+            }
+        }
     }
     
     var id: String
