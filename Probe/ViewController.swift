@@ -76,7 +76,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         }
         cacheManager.createTable(templateModels)
 
-        self.templateModels = templateModels
+        self.templateModels = cacheManager.select()
         update()
     }
 // MARK: - SocketManagerDelegate

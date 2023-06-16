@@ -14,6 +14,7 @@ enum MessageType: String {
     case start = "start"
     case inProgress = "inProgress"
     case finish = "finish"
+    case finishRecv = "finishRecv"
 }
 
 protocol SocketManagerDelegate: AnyObject {
@@ -61,11 +62,13 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             print("Error connecting to server: \(error)")
         }
     }
-    
+// MARK: - write
     func sendStartMessage(_ templateModels: [TemplateModel]) {
         guard clientSocket.isConnected else { return }
         
-        let ids = templateModels.map { $0.id }
+        var ids = templateModels.map { $0.id }
+        guard !ids.isEmpty else { return }
+        ids = [ ids[0] ]
         
         // 分批发送
         let batchSize = 10
@@ -90,6 +93,24 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         write(startMessage, tag: 2)
     }
     
+    func sendFinishReceiveMessage() {
+        guard clientSocket.isConnected else { return }
+        
+        let message = [
+            "type": MessageType.finishRecv.rawValue,
+        ]
+        
+        write(message, tag: 2)
+    }
+    
+    private func write(_ jsonObject: [String: String], tag: Int) {
+        if let jsonString = convertToJsonString(jsonObject: jsonObject) {
+            print(jsonString)
+            let message = jsonString + "end_youkun_fengexian"
+            clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: tag)
+        }
+    }
+// MARK: - json
     private func convertToJsonData(jsonObject: Any) -> Data? {
         if let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: []) {
             return jsonData
@@ -116,7 +137,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         }
         return nil
     }
-    
+// MARK: - timer
     private func scheduleHeartbeat() {
         heartbeatCounter = 0
         invalidateHeartbeat()
@@ -144,7 +165,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         reconnectTimer?.invalidate()
         reconnectTimer = nil
     }
-    
+// MARK: - read
     private func parseData(data: String) {
         print("Received message from server: \(data)")
         guard let message = convertToJsonObject(jsonString: data), let typeString = message["type"] else { return }
@@ -161,15 +182,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             break
         }
     }
-    
-    private func write(_ jsonObject: [String: String], tag: Int) {
-        if let jsonString = convertToJsonString(jsonObject: jsonObject) {
-            print(jsonString)
-            let message = jsonString + "end_youkun_fengexian"
-            clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: tag)
-        }
-    }
-    
+// MARK: - event
     private func onConnect() {
         clientSocket.readData(withTimeout: -1, tag: 0)
         scheduleHeartbeat()
@@ -193,8 +206,9 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     
     private func onFinish(_ message: [String: String]) {
         delegate?.onFinish(message)
+        sendFinishReceiveMessage()
     }
-    
+// MARK: - GCDAsyncSocketDelegate
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
         print("didConnectToHost")
         onConnect()
