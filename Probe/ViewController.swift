@@ -87,12 +87,23 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         }
     }
     
+    func onUseMontage(_ message: [String : String]) {
+        if let id = message["id"],
+           let templateModel = templateModels.first(where: { $0.id == id }) {
+            templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
+            
+            cacheManager.update(templateModel)
+            
+            update()
+        }
+    }
+    
     func onFinish(_ message: [String : String]) {
         if let id = message["id"],
            let success = (message["success"] as? NSString)?.boolValue,
            let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = success ? .success : .failed
-            templateModel.useMotage = (message["useMotage"] as? NSString)?.boolValue ?? false
+            templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
             templateModel.startMemory = (message["startMemory"] as? NSString)?.integerValue ?? -1
             templateModel.endMemory = (message["endMemory"] as? NSString)?.integerValue ?? -1
             templateModel.maxMemory = (message["maxMemory"] as? NSString)?.integerValue ?? -1

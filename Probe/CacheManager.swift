@@ -13,7 +13,7 @@ class CacheManager: NSObject {
     private let tableName = "my_table"
     private let idColomnName = "id"
     private let stateColomnName = "state"
-    private let useMotageColomnName = "use_motage"
+    private let useMontageColomnName = "use_montage"
     private let startMemoryColomnName = "start_memory"
     private let endMemoryColomnName = "end_memory"
     private let maxMemoryColomnName = "max_memory"
@@ -51,7 +51,7 @@ class CacheManager: NSObject {
         CREATE TABLE IF NOT EXISTS \(tableName) (
             \(idColomnName) INTEGER PRIMARY KEY,
             \(stateColomnName) INTEGER,
-            \(useMotageColomnName) INTEGER,
+            \(useMontageColomnName) INTEGER,
             \(startMemoryColomnName) INTEGER,
             \(endMemoryColomnName) INTEGER,
             \(maxMemoryColomnName) INTEGER,
@@ -85,7 +85,7 @@ class CacheManager: NSObject {
         INSERT INTO \(tableName)
         (\(idColomnName),
         \(stateColomnName),
-        \(useMotageColomnName),
+        \(useMontageColomnName),
         \(startMemoryColomnName),
         \(endMemoryColomnName),
         \(maxMemoryColomnName),
@@ -100,7 +100,7 @@ class CacheManager: NSObject {
         if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
             sqlite3_bind_int(insertStatement, 1, (templateModel.id as NSString).intValue)
             sqlite3_bind_int(insertStatement, 2, Int32(templateModel.state.rawValue))
-            sqlite3_bind_int(insertStatement, 3, templateModel.useMotage ? 1 : 0)
+            sqlite3_bind_int(insertStatement, 3, templateModel.useMontage ? 1 : 0)
             sqlite3_bind_int(insertStatement, 4, Int32(templateModel.startMemory))
             sqlite3_bind_int(insertStatement, 5, Int32(templateModel.endMemory))
             sqlite3_bind_int(insertStatement, 6, Int32(templateModel.maxMemory))
@@ -143,7 +143,7 @@ class CacheManager: NSObject {
         let updateSQL = """
         UPDATE \(tableName) SET
         \(stateColomnName) = ?,
-        \(useMotageColomnName) = ?,
+        \(useMontageColomnName) = ?,
         \(startMemoryColomnName) = ?,
         \(endMemoryColomnName) = ?,
         \(maxMemoryColomnName) = ?,
@@ -156,7 +156,7 @@ class CacheManager: NSObject {
 
         if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
             sqlite3_bind_int(updateStatement, 1, Int32(templateModel.state.rawValue))
-            sqlite3_bind_int(updateStatement, 2, templateModel.useMotage ? 1 : 0)
+            sqlite3_bind_int(updateStatement, 2, templateModel.useMontage ? 1 : 0)
             sqlite3_bind_int(updateStatement, 3, Int32(templateModel.startMemory))
             sqlite3_bind_int(updateStatement, 4, Int32(templateModel.endMemory))
             sqlite3_bind_int(updateStatement, 5, Int32(templateModel.maxMemory))
@@ -188,7 +188,7 @@ class CacheManager: NSObject {
                 
                 let templateModel = TemplateModel(id: "\(id)")
                 templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, 1))) ?? .ready
-                templateModel.useMotage = sqlite3_column_int64(selectStatement, 2) == 1
+                templateModel.useMontage = sqlite3_column_int64(selectStatement, 2) == 1
                 templateModel.startMemory = Int(sqlite3_column_int(selectStatement, 3))
                 templateModel.endMemory = Int(sqlite3_column_int(selectStatement, 4))
                 templateModel.maxMemory = Int(sqlite3_column_int(selectStatement, 5))

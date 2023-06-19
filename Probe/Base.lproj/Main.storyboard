@@ -742,7 +742,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="rOE-4p-0AW"/>
                                                 </constraints>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="use Motage" id="V7w-e6-Ch6">
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="use Montage" id="V7w-e6-Ch6">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -897,7 +897,7 @@
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="OE6-P0-NAh"/>
                                                                                     </constraints>
-                                                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="useMotage" id="GA7-rl-N45">
+                                                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="useMontage" id="GA7-rl-N45">
                                                                                         <font key="font" metaFont="system"/>
                                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1004,7 +1004,7 @@
                                                                         <outlet property="maxMemoryLabel" destination="yRR-AX-mGA" id="N8c-7y-hzi"/>
                                                                         <outlet property="startMemoryLabel" destination="POs-mI-1g0" id="CtM-RR-Oy0"/>
                                                                         <outlet property="stateLabel" destination="zTD-2a-Hm5" id="o1n-hb-AEE"/>
-                                                                        <outlet property="useMotageLabel" destination="EOi-fU-oSi" id="O8l-M5-EDQ"/>
+                                                                        <outlet property="useMontageLabel" destination="EOi-fU-oSi" id="O8l-M5-EDQ"/>
                                                                     </connections>
                                                                 </tableCellView>
                                                             </prototypeCellViews>

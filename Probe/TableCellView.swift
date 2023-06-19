@@ -10,7 +10,7 @@ import Cocoa
 class TableCellView: NSTableCellView {
     @IBOutlet weak var idLabel: NSTextField!
     @IBOutlet weak var stateLabel: NSTextField!
-    @IBOutlet weak var useMotageLabel: NSTextField!
+    @IBOutlet weak var useMontageLabel: NSTextField!
     @IBOutlet weak var startMemoryLabel: NSTextField!
     @IBOutlet weak var endMemoryLabel: NSTextField!
     @IBOutlet weak var maxMemoryLabel: NSTextField!
@@ -22,7 +22,7 @@ class TableCellView: NSTableCellView {
         idLabel.stringValue = tempalteModel.id
         stateLabel.stringValue = "\(tempalteModel.state)"
         stateLabel.textColor = tempalteModel.state.color
-        useMotageLabel.stringValue = "\(tempalteModel.useMotage)"
+        useMontageLabel.stringValue = "\(tempalteModel.useMontage)"
         startMemoryLabel.stringValue = "\(tempalteModel.startMemory)"
         endMemoryLabel.stringValue = "\(tempalteModel.endMemory)"
         maxMemoryLabel.stringValue = "\(tempalteModel.maxMemory)"
