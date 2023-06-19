@@ -29,6 +29,7 @@ class TemplateModel: NSObject {
     }
     
     var id: String
+    var name = "unknown"
     var state = State.ready
     var useMontage = false
     var startMemory: Int = -1
@@ -65,7 +66,9 @@ class TemplateModel: NSObject {
         self.id = id
     }
     
+    let space = "$"
+    
     override var description: String {
-        return "\(id) \(state) \(useMontage) \(startMemory) \(endMemory) \(maxMemory) \(duration) \(errorMsg ?? "-") \(filePath ?? "-")"
+        return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")"
     }
 }

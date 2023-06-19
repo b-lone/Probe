@@ -12,8 +12,9 @@ enum MessageType: String {
     case invalid
     case heartbeat = "heartbeat"
     case start = "start"
-    case useMontage = "useMontage"
     case inProgress = "inProgress"
+    case update = "update"
+    case useMontage = "useMontage"
     case finish = "finish"
     case end = "end"
 }
@@ -21,6 +22,7 @@ enum MessageType: String {
 protocol SocketManagerDelegate: AnyObject {
     func onConnect()
     func onInProgress(_ message: [String: String])
+    func onUpdate(_ message: [String: String])
     func onUseMontage(_ message: [String: String])
     func onFinish(_ message: [String: String])
     func onDisconnect()
@@ -95,7 +97,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         write(startMessage, tag: 2)
     }
     
-    func sendFinishReceiveMessage() {
+    func sendEndMessage() {
         guard clientSocket.isConnected else { return }
         
         let message = [
@@ -178,10 +180,12 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             onHeartbeat(message)
         case .inProgress:
             onInProgress(message)
-        case .finish:
-            onFinish(message)
+        case .update:
+            onUpdate(message)
         case .useMontage:
             onUseMontage(message)
+        case .finish:
+            onFinish(message)
         default:
             break
         }
@@ -208,13 +212,16 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         delegate?.onInProgress(message)
     }
     
+    private func onUpdate(_ message: [String: String]) {
+        delegate?.onUpdate(message)
+    }
+    
     private func onUseMontage(_ message: [String: String]) {
         delegate?.onUseMontage(message)
     }
     
     private func onFinish(_ message: [String: String]) {
         delegate?.onFinish(message)
-        sendFinishReceiveMessage()
     }
 // MARK: - GCDAsyncSocketDelegate
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {

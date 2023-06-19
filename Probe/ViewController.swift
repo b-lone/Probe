@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
+class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
     private let importManager = ImportManager()
     private var exportManager = ExportManager()
     private let socketManager = SocketManager()
@@ -29,6 +29,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         
         importManager.delegate = self
         socketManager.delegate = self
+        launchManager.delegate = self
         cacheManager.setup()
 
         templateModels = cacheManager.select()
@@ -69,7 +70,14 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         exportManager.exprot(templateModels)
     }
     
-// MARK: - ImportManagerDelegate
+    @IBAction func onExportFailedIds(_ sender: Any) {
+        exportManager.exportFailedIds(templateModels)
+    }
+    
+    @IBAction func onEnd(_ sender: Any) {
+        launchManager.end()
+    }
+    // MARK: - ImportManagerDelegate
     func importDidFinish(_ data: [String]) {
         let templateModels = data.map { id in
             TemplateModel(id: id)
@@ -83,6 +91,13 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     func onInProgress(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = .inProgress
+            update()
+        }
+    }
+    
+    func onUpdate(_ message: [String : String]) {
+        if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
+            templateModel.name = message["name"] ?? "unknown"
             update()
         }
     }
@@ -103,7 +118,6 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
            let success = (message["success"] as? NSString)?.boolValue,
            let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = success ? .success : .failed
-            templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
             templateModel.startMemory = (message["startMemory"] as? NSString)?.integerValue ?? -1
             templateModel.endMemory = (message["endMemory"] as? NSString)?.integerValue ?? -1
             templateModel.maxMemory = (message["maxMemory"] as? NSString)?.integerValue ?? -1
@@ -112,6 +126,8 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
             templateModel.filePath = message["file_path"]
             
             cacheManager.update(templateModel)
+            
+            launchManager.download(templateModel)
             
             update()
         }
@@ -134,6 +150,12 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         
         update()
     }
+    
+// MARK: - LaunchManagerDelegate
+    func onDownloadFinished(_ templateId: String) {
+        socketManager.sendEndMessage()
+    }
+    
 // MARK: - NSTableViewDelegate
     func numberOfRows(in tableView: NSTableView) -> Int {
         return templateModels.count
@@ -142,6 +164,11 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "TableCellView"), owner: nil) as? TableCellView
         view?.setup(templateModels[row])
+        var frame = view?.frame
+        frame?.size.width = tableView.frame.width
+        if let frame = frame {
+            view?.frame = frame
+        }
         return view ?? TableCellView()
     }
 }

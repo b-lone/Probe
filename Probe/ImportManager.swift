@@ -32,7 +32,8 @@ class ImportManager: NSObject {
     
     private func parseFile(_ url: URL) {
         do {
-            let fileContent = try String(contentsOf: url, encoding: .utf8)
+            var fileContent = try String(contentsOf: url, encoding: .utf8)
+            fileContent = fileContent.trimmingCharacters(in: .whitespacesAndNewlines)
             let lines = fileContent.components(separatedBy: "\n")
             var cleanedLines: [String] = []
 

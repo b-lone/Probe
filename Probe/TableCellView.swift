@@ -9,6 +9,7 @@ import Cocoa
 
 class TableCellView: NSTableCellView {
     @IBOutlet weak var idLabel: NSTextField!
+    @IBOutlet weak var nameLabel: NSTextField!
     @IBOutlet weak var stateLabel: NSTextField!
     @IBOutlet weak var useMontageLabel: NSTextField!
     @IBOutlet weak var startMemoryLabel: NSTextField!
@@ -20,6 +21,7 @@ class TableCellView: NSTableCellView {
     
     func setup(_ tempalteModel: TemplateModel) {
         idLabel.stringValue = tempalteModel.id
+        nameLabel.stringValue = tempalteModel.name
         stateLabel.stringValue = "\(tempalteModel.state)"
         stateLabel.textColor = tempalteModel.state.color
         useMontageLabel.stringValue = "\(tempalteModel.useMontage)"

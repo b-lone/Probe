@@ -726,8 +726,19 @@
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yV1-LM-RpQ" userLabel="state">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="G2d-lb-ddi">
                                                 <rect key="frame" x="78" y="4" width="76" height="16"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="72" id="rRg-8W-nmH"/>
+                                                </constraints>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="name" id="o7u-9V-ddS">
+                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yV1-LM-RpQ" userLabel="state">
+                                                <rect key="frame" x="158" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="7qe-sC-q8Q"/>
                                                 </constraints>
@@ -738,7 +749,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KOY-pd-une">
-                                                <rect key="frame" x="158" y="4" width="76" height="16"/>
+                                                <rect key="frame" x="238" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="rOE-4p-0AW"/>
                                                 </constraints>
@@ -749,7 +760,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bU8-ia-gdU">
-                                                <rect key="frame" x="238" y="4" width="76" height="16"/>
+                                                <rect key="frame" x="318" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="Zvf-VF-y5n"/>
                                                 </constraints>
@@ -760,7 +771,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8R6-tj-oyR">
-                                                <rect key="frame" x="318" y="4" width="76" height="16"/>
+                                                <rect key="frame" x="398" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="ZBR-RR-zla"/>
                                                 </constraints>
@@ -771,7 +782,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="D7x-zU-hM1">
-                                                <rect key="frame" x="398" y="4" width="76" height="16"/>
+                                                <rect key="frame" x="478" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="qsr-dr-Xfw"/>
                                                 </constraints>
@@ -782,7 +793,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SSX-jA-SMz">
-                                                <rect key="frame" x="478" y="4" width="76" height="16"/>
+                                                <rect key="frame" x="558" y="4" width="76" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="72" id="Czs-BX-Sl9"/>
                                                 </constraints>
@@ -793,7 +804,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xFk-vo-d7E">
-                                                <rect key="frame" x="558" y="4" width="168" height="16"/>
+                                                <rect key="frame" x="638" y="4" width="168" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="164" id="MUU-hS-nCO"/>
                                                 </constraints>
@@ -804,7 +815,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qlf-LE-0tt">
-                                                <rect key="frame" x="730" y="4" width="472" height="16"/>
+                                                <rect key="frame" x="810" y="4" width="392" height="16"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="filepath." id="ch0-lv-F63">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -825,8 +836,10 @@
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -863,12 +876,11 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
-                                                                <tableCellView identifier="TableCellView" id="GF1-T1-V7B" customClass="TableCellView" customModule="Probe" customModuleProvider="target">
-                                                                    <rect key="frame" x="8" y="0.0" width="995" height="24"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                <tableCellView identifier="TableCellView" translatesAutoresizingMaskIntoConstraints="NO" id="GF1-T1-V7B" customClass="TableCellView" customModule="Probe" customModuleProvider="target">
+                                                                    <rect key="frame" x="8" y="0.0" width="1200" height="24"/>
                                                                     <subviews>
                                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SRu-wq-RVP">
-                                                                            <rect key="frame" x="16" y="4" width="785" height="16"/>
+                                                                            <rect key="frame" x="16" y="4" width="865" height="16"/>
                                                                             <subviews>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mKZ-8h-qrd">
                                                                                     <rect key="frame" x="-2" y="0.0" width="76" height="16"/>
@@ -881,8 +893,19 @@
                                                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                                     </textFieldCell>
                                                                                 </textField>
-                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zTD-2a-Hm5" userLabel="state">
+                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aX0-5a-yWw">
                                                                                     <rect key="frame" x="78" y="0.0" width="76" height="16"/>
+                                                                                    <constraints>
+                                                                                        <constraint firstAttribute="width" constant="72" id="292-Xk-ADv"/>
+                                                                                    </constraints>
+                                                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="name" id="OOO-Ov-EWl">
+                                                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                                    </textFieldCell>
+                                                                                </textField>
+                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zTD-2a-Hm5" userLabel="state">
+                                                                                    <rect key="frame" x="158" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="uNH-n2-l3Z"/>
                                                                                     </constraints>
@@ -893,7 +916,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EOi-fU-oSi">
-                                                                                    <rect key="frame" x="158" y="0.0" width="76" height="16"/>
+                                                                                    <rect key="frame" x="238" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="OE6-P0-NAh"/>
                                                                                     </constraints>
@@ -904,7 +927,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="POs-mI-1g0">
-                                                                                    <rect key="frame" x="238" y="0.0" width="76" height="16"/>
+                                                                                    <rect key="frame" x="318" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="cAY-tm-GWD"/>
                                                                                     </constraints>
@@ -915,7 +938,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xgj-lt-6jw">
-                                                                                    <rect key="frame" x="318" y="0.0" width="76" height="16"/>
+                                                                                    <rect key="frame" x="398" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="rRd-3N-cay"/>
                                                                                     </constraints>
@@ -926,7 +949,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yRR-AX-mGA">
-                                                                                    <rect key="frame" x="398" y="0.0" width="76" height="16"/>
+                                                                                    <rect key="frame" x="478" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="js8-9p-Jk8"/>
                                                                                     </constraints>
@@ -937,7 +960,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LP0-kK-W6G">
-                                                                                    <rect key="frame" x="478" y="0.0" width="76" height="16"/>
+                                                                                    <rect key="frame" x="558" y="0.0" width="76" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="72" id="KiY-Wu-9se"/>
                                                                                     </constraints>
@@ -948,7 +971,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kMk-ZF-UeD">
-                                                                                    <rect key="frame" x="558" y="0.0" width="168" height="16"/>
+                                                                                    <rect key="frame" x="638" y="0.0" width="168" height="16"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="164" id="jnp-hQ-TJO"/>
                                                                                     </constraints>
@@ -959,7 +982,7 @@
                                                                                     </textFieldCell>
                                                                                 </textField>
                                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="smQ-mR-TIH">
-                                                                                    <rect key="frame" x="730" y="0.0" width="57" height="16"/>
+                                                                                    <rect key="frame" x="810" y="0.0" width="57" height="16"/>
                                                                                     <textFieldCell key="cell" lineBreakMode="clipping" title="file_path" id="s88-HP-ZYv">
                                                                                         <font key="font" metaFont="system"/>
                                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -977,8 +1000,10 @@
                                                                                 <integer value="1000"/>
                                                                                 <integer value="1000"/>
                                                                                 <integer value="1000"/>
+                                                                                <integer value="1000"/>
                                                                             </visibilityPriorities>
                                                                             <customSpacing>
+                                                                                <real value="3.4028234663852886e+38"/>
                                                                                 <real value="3.4028234663852886e+38"/>
                                                                                 <real value="3.4028234663852886e+38"/>
                                                                                 <real value="3.4028234663852886e+38"/>
@@ -1002,6 +1027,7 @@
                                                                         <outlet property="filePathLabel" destination="smQ-mR-TIH" id="WAM-Bp-hET"/>
                                                                         <outlet property="idLabel" destination="mKZ-8h-qrd" id="e9z-kI-TOO"/>
                                                                         <outlet property="maxMemoryLabel" destination="yRR-AX-mGA" id="N8c-7y-hzi"/>
+                                                                        <outlet property="nameLabel" destination="aX0-5a-yWw" id="gij-XM-U0o"/>
                                                                         <outlet property="startMemoryLabel" destination="POs-mI-1g0" id="CtM-RR-Oy0"/>
                                                                         <outlet property="stateLabel" destination="zTD-2a-Hm5" id="o1n-hb-AEE"/>
                                                                         <outlet property="useMontageLabel" destination="EOi-fU-oSi" id="O8l-M5-EDQ"/>
@@ -1099,7 +1125,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1200" height="48"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qu4-JU-ZBe">
-                                        <rect key="frame" x="16" y="14" width="186" height="20"/>
+                                        <rect key="frame" x="16" y="14" width="368" height="20"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MeM-hw-Dwu">
                                                 <rect key="frame" x="-7" y="-7" width="74" height="32"/>
@@ -1131,13 +1157,37 @@
                                                     <action selector="onExport:" target="XfG-lQ-9wD" id="aOj-VV-K5e"/>
                                                 </connections>
                                             </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DiQ-U2-Arl">
+                                                <rect key="frame" x="187" y="-7" width="136" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Export Failed IDs" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FBf-la-UeE">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="onExportFailedIds:" target="XfG-lQ-9wD" id="cno-Fc-ISp"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eER-1h-V3e">
+                                                <rect key="frame" x="317" y="-7" width="58" height="32"/>
+                                                <buttonCell key="cell" type="push" title="End" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rNp-yk-yzj">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="onEnd:" target="XfG-lQ-9wD" id="1Cf-PQ-6Lc"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <visibilityPriorities>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>

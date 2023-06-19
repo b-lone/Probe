@@ -12,6 +12,7 @@ class CacheManager: NSObject {
     private var database: OpaquePointer?
     private let tableName = "my_table"
     private let idColomnName = "id"
+    private let nameColomnName = "name"
     private let stateColomnName = "state"
     private let useMontageColomnName = "use_montage"
     private let startMemoryColomnName = "start_memory"
@@ -50,6 +51,7 @@ class CacheManager: NSObject {
         let createTableSQL = """
         CREATE TABLE IF NOT EXISTS \(tableName) (
             \(idColomnName) INTEGER PRIMARY KEY,
+            \(nameColomnName) TEXT,
             \(stateColomnName) INTEGER,
             \(useMontageColomnName) INTEGER,
             \(startMemoryColomnName) INTEGER,
@@ -84,6 +86,7 @@ class CacheManager: NSObject {
         let insertSQL = """
         INSERT INTO \(tableName)
         (\(idColomnName),
+        \(nameColomnName),
         \(stateColomnName),
         \(useMontageColomnName),
         \(startMemoryColomnName),
@@ -93,20 +96,31 @@ class CacheManager: NSObject {
         \(errorColomnName),
         \(filePathColomnName))
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         var insertStatement: OpaquePointer?
 
         if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
-            sqlite3_bind_int(insertStatement, 1, (templateModel.id as NSString).intValue)
-            sqlite3_bind_int(insertStatement, 2, Int32(templateModel.state.rawValue))
-            sqlite3_bind_int(insertStatement, 3, templateModel.useMontage ? 1 : 0)
-            sqlite3_bind_int(insertStatement, 4, Int32(templateModel.startMemory))
-            sqlite3_bind_int(insertStatement, 5, Int32(templateModel.endMemory))
-            sqlite3_bind_int(insertStatement, 6, Int32(templateModel.maxMemory))
-            sqlite3_bind_int(insertStatement, 7, Int32(templateModel.duration))
-            sqlite3_bind_text(insertStatement, 8, templateModel.errorMsg ?? "", -1, nil)
-            sqlite3_bind_text(insertStatement, 9, templateModel.filePath ?? "", -1, nil)
+            var index: Int32 = 1
+            sqlite3_bind_int(insertStatement, index, (templateModel.id as NSString).intValue)
+            index += 1
+            sqlite3_bind_text(insertStatement, index, (templateModel.name as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int(insertStatement, index, Int32(templateModel.state.rawValue))
+            index += 1
+            sqlite3_bind_int(insertStatement, index, templateModel.useMontage ? 1 : 0)
+            index += 1
+            sqlite3_bind_int(insertStatement, index, Int32(templateModel.startMemory))
+            index += 1
+            sqlite3_bind_int(insertStatement, index, Int32(templateModel.endMemory))
+            index += 1
+            sqlite3_bind_int(insertStatement, index, Int32(templateModel.maxMemory))
+            index += 1
+            sqlite3_bind_int(insertStatement, index, Int32(templateModel.duration))
+            index += 1
+            sqlite3_bind_text(insertStatement, index, ((templateModel.errorMsg ?? "") as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_text(insertStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
 
             if sqlite3_step(insertStatement) == SQLITE_DONE {
                 print("Successfully inserted row.")
@@ -142,6 +156,7 @@ class CacheManager: NSObject {
     func update(_ templateModel: TemplateModel) {
         let updateSQL = """
         UPDATE \(tableName) SET
+        \(nameColomnName) = ?,
         \(stateColomnName) = ?,
         \(useMontageColomnName) = ?,
         \(startMemoryColomnName) = ?,
@@ -155,15 +170,26 @@ class CacheManager: NSObject {
         var updateStatement: OpaquePointer?
 
         if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
-            sqlite3_bind_int(updateStatement, 1, Int32(templateModel.state.rawValue))
-            sqlite3_bind_int(updateStatement, 2, templateModel.useMontage ? 1 : 0)
-            sqlite3_bind_int(updateStatement, 3, Int32(templateModel.startMemory))
-            sqlite3_bind_int(updateStatement, 4, Int32(templateModel.endMemory))
-            sqlite3_bind_int(updateStatement, 5, Int32(templateModel.maxMemory))
-            sqlite3_bind_int(updateStatement, 6, Int32(templateModel.duration))
-            sqlite3_bind_text(updateStatement, 7, ((templateModel.errorMsg ?? "") as NSString).utf8String , -1, nil)
-            sqlite3_bind_text(updateStatement, 8, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 9, (templateModel.id as NSString).intValue)
+            var index: Int32 = 1
+            sqlite3_bind_text(updateStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int(updateStatement, index, Int32(templateModel.state.rawValue))
+            index += 1
+            sqlite3_bind_int(updateStatement, index, templateModel.useMontage ? 1 : 0)
+            index += 1
+            sqlite3_bind_int(updateStatement, index, Int32(templateModel.startMemory))
+            index += 1
+            sqlite3_bind_int(updateStatement, index, Int32(templateModel.endMemory))
+            index += 1
+            sqlite3_bind_int(updateStatement, index, Int32(templateModel.maxMemory))
+            index += 1
+            sqlite3_bind_int(updateStatement, index, Int32(templateModel.duration))
+            index += 1
+            sqlite3_bind_text(updateStatement, index, ((templateModel.errorMsg ?? "") as NSString).utf8String , -1, nil)
+            index += 1
+            sqlite3_bind_text(updateStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int(updateStatement, index, (templateModel.id as NSString).intValue)
 
             if sqlite3_step(updateStatement) == SQLITE_DONE {
                 print("Successfully updated row.")
@@ -184,18 +210,29 @@ class CacheManager: NSObject {
         var templateModels = [TemplateModel]()
         if sqlite3_prepare_v2(database, selectSQL, -1, &selectStatement, nil) == SQLITE_OK {
             while sqlite3_step(selectStatement) == SQLITE_ROW {
-                let id = sqlite3_column_int64(selectStatement, 0)
-                
+                var index: Int32 = 0
+                let id = sqlite3_column_int64(selectStatement, index)
                 let templateModel = TemplateModel(id: "\(id)")
-                templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, 1))) ?? .ready
-                templateModel.useMontage = sqlite3_column_int64(selectStatement, 2) == 1
-                templateModel.startMemory = Int(sqlite3_column_int(selectStatement, 3))
-                templateModel.endMemory = Int(sqlite3_column_int(selectStatement, 4))
-                templateModel.maxMemory = Int(sqlite3_column_int(selectStatement, 5))
-                templateModel.duration = Int(sqlite3_column_int(selectStatement, 6))
-                let error = String(cString: sqlite3_column_text(selectStatement, 7))
+                index += 1
+                let name = String(cString: sqlite3_column_text(selectStatement, index))
+                templateModel.name = name
+                index += 1
+                templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, index))) ?? .ready
+                index += 1
+                templateModel.useMontage = sqlite3_column_int64(selectStatement, index) == 1
+                index += 1
+                templateModel.startMemory = Int(sqlite3_column_int(selectStatement, index))
+                index += 1
+                templateModel.endMemory = Int(sqlite3_column_int(selectStatement, index))
+                index += 1
+                templateModel.maxMemory = Int(sqlite3_column_int(selectStatement, index))
+                index += 1
+                templateModel.duration = Int(sqlite3_column_int(selectStatement, index))
+                index += 1
+                let error = String(cString: sqlite3_column_text(selectStatement, index))
                 templateModel.errorMsg = error
-                let filePath = String(cString: sqlite3_column_text(selectStatement, 8))
+                index += 1
+                let filePath = String(cString: sqlite3_column_text(selectStatement, index))
                 templateModel.filePath = filePath
                 
                 templateModels.append(templateModel)
