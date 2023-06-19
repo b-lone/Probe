@@ -127,7 +127,11 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
             
             cacheManager.update(templateModel)
             
-            launchManager.download(templateModel)
+            if success {
+                launchManager.download(templateModel)
+            } else {
+                socketManager.sendEndMessage()
+            }
             
             update()
         }

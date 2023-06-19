@@ -171,7 +171,7 @@ class CacheManager: NSObject {
 
         if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
             var index: Int32 = 1
-            sqlite3_bind_text(updateStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(updateStatement, index, (templateModel.name as NSString).utf8String, -1, nil)
             index += 1
             sqlite3_bind_int(updateStatement, index, Int32(templateModel.state.rawValue))
             index += 1
