@@ -15,6 +15,7 @@ class CacheManager: NSObject {
     private let nameColomnName = "name"
     private let stateColomnName = "state"
     private let useMontageColomnName = "use_montage"
+    private let useMontageFlagColomnName = "use_montage_flag"
     private let startMemoryColomnName = "start_memory"
     private let endMemoryColomnName = "end_memory"
     private let maxMemoryColomnName = "max_memory"
@@ -54,6 +55,7 @@ class CacheManager: NSObject {
             \(nameColomnName) TEXT,
             \(stateColomnName) INTEGER,
             \(useMontageColomnName) INTEGER,
+            \(useMontageFlagColomnName) TEXT,
             \(startMemoryColomnName) INTEGER,
             \(endMemoryColomnName) INTEGER,
             \(maxMemoryColomnName) INTEGER,
@@ -89,6 +91,7 @@ class CacheManager: NSObject {
         \(nameColomnName),
         \(stateColomnName),
         \(useMontageColomnName),
+        \(useMontageFlagColomnName),
         \(startMemoryColomnName),
         \(endMemoryColomnName),
         \(maxMemoryColomnName),
@@ -96,7 +99,7 @@ class CacheManager: NSObject {
         \(errorColomnName),
         \(filePathColomnName))
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         var insertStatement: OpaquePointer?
 
@@ -109,6 +112,8 @@ class CacheManager: NSObject {
             sqlite3_bind_int(insertStatement, index, Int32(templateModel.state.rawValue))
             index += 1
             sqlite3_bind_int(insertStatement, index, templateModel.useMontage ? 1 : 0)
+            index += 1
+            sqlite3_bind_text(insertStatement, index, ((templateModel.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
             index += 1
             sqlite3_bind_int(insertStatement, index, Int32(templateModel.startMemory))
             index += 1
@@ -159,6 +164,7 @@ class CacheManager: NSObject {
         \(nameColomnName) = ?,
         \(stateColomnName) = ?,
         \(useMontageColomnName) = ?,
+        \(useMontageFlagColomnName) = ?,
         \(startMemoryColomnName) = ?,
         \(endMemoryColomnName) = ?,
         \(maxMemoryColomnName) = ?,
@@ -176,6 +182,8 @@ class CacheManager: NSObject {
             sqlite3_bind_int(updateStatement, index, Int32(templateModel.state.rawValue))
             index += 1
             sqlite3_bind_int(updateStatement, index, templateModel.useMontage ? 1 : 0)
+            index += 1
+            sqlite3_bind_text(updateStatement, index, ((templateModel.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
             index += 1
             sqlite3_bind_int(updateStatement, index, Int32(templateModel.startMemory))
             index += 1
@@ -220,6 +228,9 @@ class CacheManager: NSObject {
                 templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, index))) ?? .ready
                 index += 1
                 templateModel.useMontage = sqlite3_column_int64(selectStatement, index) == 1
+                index += 1
+                let useMontageFlag = String(cString: sqlite3_column_text(selectStatement, index))
+                templateModel.useMontageFlag = useMontageFlag
                 index += 1
                 templateModel.startMemory = Int(sqlite3_column_int(selectStatement, index))
                 index += 1

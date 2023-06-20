@@ -106,6 +106,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         if let id = message["id"],
            let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
+            templateModel.useMontageFlag = message["flag"]
             
             cacheManager.update(templateModel)
             

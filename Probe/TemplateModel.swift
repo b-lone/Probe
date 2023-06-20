@@ -31,7 +31,21 @@ class TemplateModel: NSObject {
     var id: String
     var name = "unknown"
     var state = State.ready
+    
     var useMontage = false
+    private var _useMontageFlag: String?
+    var useMontageFlag: String? {
+        get {
+            if _useMontageFlag?.isEmpty == true {
+                return nil
+            }
+            return _useMontageFlag
+        }
+        set {
+            _useMontageFlag = newValue
+        }
+    }
+    
     var startMemory: Int = -1
     var endMemory: Int = -1
     var maxMemory: Int = -1
@@ -69,6 +83,6 @@ class TemplateModel: NSObject {
     let space = "$"
     
     override var description: String {
-        return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")"
+        return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(useMontageFlag ?? "-")\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")"
     }
 }
