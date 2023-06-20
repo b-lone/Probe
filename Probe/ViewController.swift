@@ -13,6 +13,7 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     private let socketManager = SocketManager()
     private let cacheManager = CacheManager()
     private let launchManager = LaunchManager()
+    private let caseManager = CaseManager()
     private var templateModels = [TemplateModel]()
     private var needResendStartMessage = true
     

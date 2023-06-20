@@ -105,7 +105,7 @@ class CacheManager: NSObject {
 
         if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
             var index: Int32 = 1
-            sqlite3_bind_int(insertStatement, index, (templateModel.id as NSString).intValue)
+            sqlite3_bind_int64(insertStatement, index, sqlite3_int64((templateModel.id as NSString).integerValue))
             index += 1
             sqlite3_bind_text(insertStatement, index, (templateModel.name as NSString).utf8String, -1, nil)
             index += 1
@@ -139,12 +139,12 @@ class CacheManager: NSObject {
         sqlite3_finalize(insertStatement)
     }
     
-    func remove() {
-        let deleteSQL = "DELETE FROM your_table WHERE column1 = ?"
+    func remove(_ model: TemplateModel) {
+        let deleteSQL = "DELETE FROM \(tableName) WHERE \(idColomnName) = ?"
         var deleteStatement: OpaquePointer?
 
         if sqlite3_prepare_v2(database, deleteSQL, -1, &deleteStatement, nil) == SQLITE_OK {
-            sqlite3_bind_text(deleteStatement, 1, "value1", -1, nil)
+            sqlite3_bind_int64(deleteStatement, 1, sqlite3_int64((model.id as NSString).integerValue))
 
             if sqlite3_step(deleteStatement) == SQLITE_DONE {
                 print("Successfully deleted row.")
@@ -197,7 +197,7 @@ class CacheManager: NSObject {
             index += 1
             sqlite3_bind_text(updateStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(updateStatement, index, (templateModel.id as NSString).intValue)
+            sqlite3_bind_int64(updateStatement, index, sqlite3_int64((templateModel.id as NSString).integerValue))
 
             if sqlite3_step(updateStatement) == SQLITE_DONE {
                 print("Successfully updated row.")
