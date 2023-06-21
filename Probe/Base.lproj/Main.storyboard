@@ -705,15 +705,15 @@
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Probe" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="m2S-Jp-Qdl">
+                    <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qRa-VN-KTZ" userLabel="TableContainer">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="qRa-VN-KTZ" userLabel="TableContainer">
                                 <rect key="frame" x="0.0" y="96" width="1200" height="704"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zp6-UO-aSS">
-                                        <rect key="frame" x="0.0" y="28" width="1200" height="20"/>
+                                        <rect key="frame" x="0.0" y="684" width="1200" height="20"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yy4-EL-fw1">
                                                 <rect key="frame" x="-2" y="4" width="76" height="16"/>
@@ -852,13 +852,13 @@
                                         </customSpacing>
                                     </stackView>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m5W-hk-21d">
-                                        <rect key="frame" x="0.0" y="0.0" width="1200" height="28"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="1200" height="684"/>
                                         <clipView key="contentView" id="iPG-gh-qNM">
-                                            <rect key="frame" x="1" y="1" width="1198" height="26"/>
+                                            <rect key="frame" x="1" y="1" width="1198" height="682"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" id="Koy-mk-Y5D">
-                                                    <rect key="frame" x="0.0" y="0.0" width="1198" height="26"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="1198" height="682"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -877,7 +877,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="TableCellView" translatesAutoresizingMaskIntoConstraints="NO" id="GF1-T1-V7B" customClass="TableCellView" customModule="Probe" customModuleProvider="target">
-                                                                    <rect key="frame" x="8" y="0.0" width="1200" height="24"/>
+                                                                    <rect key="frame" x="8" y="0.0" width="995" height="24"/>
                                                                     <subviews>
                                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SRu-wq-RVP">
                                                                             <rect key="frame" x="16" y="4" width="865" height="16"/>

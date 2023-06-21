@@ -9,8 +9,13 @@ import Cocoa
 import SQLite3
 
 class CacheManager: NSObject {
-    private var database: OpaquePointer?
-    private let tableName = "my_table"
+    private var databaseWrapper: SQLiteDatabaseWrapper
+    private var database: OpaquePointer? {
+        databaseWrapper.database
+    }
+    
+    private let tableName = "template_models"
+    
     private let idColomnName = "id"
     private let nameColomnName = "name"
     private let stateColomnName = "state"
@@ -23,22 +28,9 @@ class CacheManager: NSObject {
     private let errorColomnName = "error_msg"
     private let filePathColomnName = "file_path"
     
-    deinit {
-        if let database = database {
-            sqlite3_close(database)
-        }
-    }
     
-    func setup() {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let databaseURL = documentsURL.appendingPathComponent("database.db")
-
-        if sqlite3_open(databaseURL.path, &database) == SQLITE_OK {
-            print("Database opened successfully")
-        } else {
-            print("Failed to open database")
-        }
+    init(database: SQLiteDatabaseWrapper) {
+        self.databaseWrapper = database
     }
     
     func createTable(_ templateModels: [TemplateModel]) {

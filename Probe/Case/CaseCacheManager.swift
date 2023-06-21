@@ -9,28 +9,18 @@ import Cocoa
 import SQLite3
 
 class CaseCacheManager: NSObject {
-    private var database: OpaquePointer?
+    private var databaseWrapper: SQLiteDatabaseWrapper
+    private var database: OpaquePointer? {
+        databaseWrapper.database
+    }
     
-    private let tableName = "my_table"
+    private let tableName = "test_cases"
+    
     private let idColomnName = "id"
     private let nameColomnName = "name"
     
-    deinit {
-        if let database = database {
-            sqlite3_close(database)
-        }
-    }
-    
-    func setup() {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let databaseURL = documentsURL.appendingPathComponent("database.db")
-
-        if sqlite3_open(databaseURL.path, &database) == SQLITE_OK {
-            print("Database opened successfully")
-        } else {
-            print("Failed to open database")
-        }
+    init(database: SQLiteDatabaseWrapper) {
+        self.databaseWrapper = database
     }
     
     func createTable(_ models: [TestCaseModel]) {

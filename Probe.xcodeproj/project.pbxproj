@@ -11,8 +11,15 @@
 		2128AD9C2A41A9A1005D43B9 /* CaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */; };
 		2128AD9E2A41AA1D005D43B9 /* TestCaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */; };
 		2128ADA12A41ACB0005D43B9 /* CaseCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */; };
-		2128ADA32A41B1FC005D43B9 /* SQLiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA22A41B1FC005D43B9 /* SQLiteManager.swift */; };
-		2128ADA62A41B261005D43B9 /* SQLiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA52A41B261005D43B9 /* SQLiteModel.swift */; };
+		2128ADA82A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */; };
+		2128ADAF2A42CBC2005D43B9 /* NewCaseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */; };
+		2128ADB02A42CBC2005D43B9 /* NewCaseWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */; };
+		2128ADB42A42D5DE005D43B9 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADB32A42D5DE005D43B9 /* RxBlocking */; };
+		2128ADB62A42D5DE005D43B9 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADB52A42D5DE005D43B9 /* RxCocoa */; };
+		2128ADB82A42D5DF005D43B9 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADB72A42D5DF005D43B9 /* RxRelay */; };
+		2128ADBA2A42D5DF005D43B9 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADB92A42D5DF005D43B9 /* RxSwift */; };
+		2128ADBE2A42DAC8005D43B9 /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADBD2A42DAC8005D43B9 /* AppContext.swift */; };
+		2128ADC12A42F99A005D43B9 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADC02A42F99A005D43B9 /* SnapKit */; };
 		214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67902A1E01EF00BE704B /* AppDelegate.swift */; };
 		214B67932A1E01EF00BE704B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67922A1E01EF00BE704B /* ViewController.swift */; };
 		214B67952A1E01F000BE704B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 214B67942A1E01F000BE704B /* Assets.xcassets */; };
@@ -32,8 +39,10 @@
 		2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseManager.swift; sourceTree = "<group>"; };
 		2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCaseModel.swift; sourceTree = "<group>"; };
 		2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseCacheManager.swift; sourceTree = "<group>"; };
-		2128ADA22A41B1FC005D43B9 /* SQLiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteManager.swift; sourceTree = "<group>"; };
-		2128ADA52A41B261005D43B9 /* SQLiteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteModel.swift; sourceTree = "<group>"; };
+		2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDatabaseWrapper.swift; sourceTree = "<group>"; };
+		2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCaseWindowController.swift; sourceTree = "<group>"; };
+		2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewCaseWindowController.xib; sourceTree = "<group>"; };
+		2128ADBD2A42DAC8005D43B9 /* AppContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContext.swift; sourceTree = "<group>"; };
 		214B678D2A1E01EF00BE704B /* Probe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Probe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		214B67902A1E01EF00BE704B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		214B67922A1E01EF00BE704B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -55,7 +64,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2128ADB62A42D5DE005D43B9 /* RxCocoa in Frameworks */,
 				214B67A12A1E023200BE704B /* CocoaAsyncSocket in Frameworks */,
+				2128ADBA2A42D5DF005D43B9 /* RxSwift in Frameworks */,
+				2128ADC12A42F99A005D43B9 /* SnapKit in Frameworks */,
+				2128ADB82A42D5DF005D43B9 /* RxRelay in Frameworks */,
+				2128ADB42A42D5DE005D43B9 /* RxBlocking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +82,8 @@
 				2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */,
 				2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */,
 				2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */,
+				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
+				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
 			);
 			path = Case;
 			sourceTree = "<group>";
@@ -75,10 +91,19 @@
 		2128ADA42A41B210005D43B9 /* SQLite */ = {
 			isa = PBXGroup;
 			children = (
-				2128ADA22A41B1FC005D43B9 /* SQLiteManager.swift */,
-				2128ADA52A41B261005D43B9 /* SQLiteModel.swift */,
+				2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */,
 			);
 			path = SQLite;
+			sourceTree = "<group>";
+		};
+		2128ADB12A42CD22005D43B9 /* Template */ = {
+			isa = PBXGroup;
+			children = (
+				216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */,
+				216D0AC72A2602FA00BDA2BF /* TableCellView.swift */,
+				216D0AC12A25E48E00BDA2BF /* CacheManager.swift */,
+			);
+			path = Template;
 			sourceTree = "<group>";
 		};
 		214B67842A1E01EF00BE704B = {
@@ -101,6 +126,7 @@
 		214B678F2A1E01EF00BE704B /* Probe */ = {
 			isa = PBXGroup;
 			children = (
+				2128ADB12A42CD22005D43B9 /* Template */,
 				2128ADA42A41B210005D43B9 /* SQLite */,
 				2128AD9F2A41AC88005D43B9 /* Case */,
 				214B67902A1E01EF00BE704B /* AppDelegate.swift */,
@@ -110,13 +136,11 @@
 				214B67962A1E01F000BE704B /* Main.storyboard */,
 				214B67992A1E01F000BE704B /* Probe.entitlements */,
 				216D0ABF2A25A97600BDA2BF /* SocketManager.swift */,
-				216D0AC12A25E48E00BDA2BF /* CacheManager.swift */,
-				216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */,
-				216D0AC72A2602FA00BDA2BF /* TableCellView.swift */,
 				216D0AD92A270A8200BDA2BF /* Probe-Bridging-Header.h */,
 				216D0AE82A28785700BDA2BF /* LaunchManager.swift */,
 				216D0B242A299C5000BDA2BF /* ExportManager.swift */,
 				2128AD992A41A8C4005D43B9 /* LocalFileManager.swift */,
+				2128ADBD2A42DAC8005D43B9 /* AppContext.swift */,
 			);
 			path = Probe;
 			sourceTree = "<group>";
@@ -146,6 +170,11 @@
 			name = Probe;
 			packageProductDependencies = (
 				214B67A02A1E023200BE704B /* CocoaAsyncSocket */,
+				2128ADB32A42D5DE005D43B9 /* RxBlocking */,
+				2128ADB52A42D5DE005D43B9 /* RxCocoa */,
+				2128ADB72A42D5DF005D43B9 /* RxRelay */,
+				2128ADB92A42D5DF005D43B9 /* RxSwift */,
+				2128ADC02A42F99A005D43B9 /* SnapKit */,
 			);
 			productName = Probe;
 			productReference = 214B678D2A1E01EF00BE704B /* Probe.app */;
@@ -178,6 +207,8 @@
 			mainGroup = 214B67842A1E01EF00BE704B;
 			packageReferences = (
 				214B679F2A1E023200BE704B /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
+				2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				2128ADBF2A42F99A005D43B9 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = 214B678E2A1E01EF00BE704B /* Products */;
 			projectDirPath = "";
@@ -195,6 +226,7 @@
 			files = (
 				214B67952A1E01F000BE704B /* Assets.xcassets in Resources */,
 				214B67982A1E01F000BE704B /* Main.storyboard in Resources */,
+				2128ADB02A42CBC2005D43B9 /* NewCaseWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,19 +238,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				2128ADA12A41ACB0005D43B9 /* CaseCacheManager.swift in Sources */,
+				2128ADBE2A42DAC8005D43B9 /* AppContext.swift in Sources */,
 				214B67932A1E01EF00BE704B /* ViewController.swift in Sources */,
 				216D0AC02A25A97600BDA2BF /* SocketManager.swift in Sources */,
 				216D0AC22A25E48E00BDA2BF /* CacheManager.swift in Sources */,
 				2128AD9E2A41AA1D005D43B9 /* TestCaseModel.swift in Sources */,
-				2128ADA62A41B261005D43B9 /* SQLiteModel.swift in Sources */,
 				216D0AC62A25FBC600BDA2BF /* TemplateModel.swift in Sources */,
+				2128ADA82A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift in Sources */,
 				216D0AC42A25EA3900BDA2BF /* ImportManager.swift in Sources */,
 				2128AD9C2A41A9A1005D43B9 /* CaseManager.swift in Sources */,
 				2128AD9A2A41A8C4005D43B9 /* LocalFileManager.swift in Sources */,
 				216D0AC82A2602FA00BDA2BF /* TableCellView.swift in Sources */,
 				216D0AE92A28785700BDA2BF /* LaunchManager.swift in Sources */,
-				2128ADA32A41B1FC005D43B9 /* SQLiteManager.swift in Sources */,
 				214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */,
+				2128ADAF2A42CBC2005D43B9 /* NewCaseWindowController.swift in Sources */,
 				216D0B252A299C5000BDA2BF /* ExportManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,6 +472,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		2128ADBF2A42F99A005D43B9 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		214B679F2A1E023200BE704B /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/robbiehanson/CocoaAsyncSocket";
@@ -450,6 +499,31 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2128ADB32A42D5DE005D43B9 /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
+		2128ADB52A42D5DE005D43B9 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		2128ADB72A42D5DF005D43B9 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		2128ADB92A42D5DF005D43B9 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2128ADB22A42D5DE005D43B9 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		2128ADC02A42F99A005D43B9 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2128ADBF2A42F99A005D43B9 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
 		214B67A02A1E023200BE704B /* CocoaAsyncSocket */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 214B679F2A1E023200BE704B /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */;

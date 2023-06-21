@@ -6,15 +6,26 @@
 //
 
 import Cocoa
+import RxSwift
+import RxCocoa
 
-class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
-    private let importManager = ImportManager()
+class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
     private var exportManager = ExportManager()
     private let socketManager = SocketManager()
-    private let cacheManager = CacheManager()
+    
+    private lazy var databaseWrapper = {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let databaseURL = documentsURL.appendingPathComponent("database.db")
+        return SQLiteDatabaseWrapper(databasePath: databaseURL.path)
+    }()
+    private lazy var cacheManager = CacheManager(database: databaseWrapper)
+    
     private let launchManager = LaunchManager()
     private let caseManager = CaseManager()
-    private var templateModels = [TemplateModel]()
+    private var templateModels: [TemplateModel] {
+        AppContext.shared.caseManager.currentTestCase?.templateModels ?? []
+    }
     private var needResendStartMessage = true
     
     @IBOutlet weak var tableView: NSTableView!
@@ -22,18 +33,26 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     @IBOutlet weak var successCountLabel: NSTextField!
     @IBOutlet weak var failedCountLabel: NSTextField!
     
+    
+    private var newCaseWindowController: NewCaseWindowController?
+    
+    private let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         successCountLabel.textColor = TemplateModel.State.success.color
         failedCountLabel.textColor = TemplateModel.State.failed.color
         
-        importManager.delegate = self
         socketManager.delegate = self
         launchManager.delegate = self
-        cacheManager.setup()
 
-        templateModels = cacheManager.select()
+        weak var weakSelf = self
+        AppContext.shared.caseManager.currentTestCaseObservable.subscribe { _ in
+            weakSelf?.update()
+        }.disposed(by: disposeBag)
+        
+//        templateModels = cacheManager.select()
         update()
     }
     
@@ -57,9 +76,12 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
         socketManager.connectToServer()
         socketManager.sendStartMessage(templateModels.filter({ $0.state == .ready }))
     }
+    
 // MARK: - IBAction
     @IBAction func onImport(_ sender: Any) {
-        importManager.importFromFile()
+        newCaseWindowController = NewCaseWindowController()
+        newCaseWindowController?.window?.center()
+        newCaseWindowController?.window?.makeKeyAndOrderFront(nil)
     }
     
     @IBAction func onStart(_ sender: Any) {
@@ -77,16 +99,6 @@ class ViewController: NSViewController, ImportManagerDelegate, SocketManagerDele
     
     @IBAction func onEnd(_ sender: Any) {
         launchManager.end()
-    }
-    // MARK: - ImportManagerDelegate
-    func importDidFinish(_ data: [String]) {
-        let templateModels = data.map { id in
-            TemplateModel(id: id)
-        }
-        cacheManager.createTable(templateModels)
-
-        self.templateModels = cacheManager.select()
-        update()
     }
 // MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
