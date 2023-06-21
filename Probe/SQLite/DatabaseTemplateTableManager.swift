@@ -1,5 +1,5 @@
 //
-//  CacheManager.swift
+//  DatabaseTemplateTableManager.swift
 //  Probe
 //
 //  Created by 尤坤 on 2023/5/30.
@@ -8,13 +8,13 @@
 import Cocoa
 import SQLite3
 
-class CacheManager: NSObject {
+class DatabaseTemplateTableManager: NSObject {
     private var databaseWrapper: SQLiteDatabaseWrapper
     private var database: OpaquePointer? {
         databaseWrapper.database
     }
     
-    private let tableName = "template_models"
+    private let tableName: String
     
     private let idColomnName = "id"
     private let nameColomnName = "name"
@@ -29,8 +29,9 @@ class CacheManager: NSObject {
     private let filePathColomnName = "file_path"
     
     
-    init(database: SQLiteDatabaseWrapper) {
+    init(database: SQLiteDatabaseWrapper, tableName: String) {
         self.databaseWrapper = database
+        self.tableName = tableName
     }
     
     func createTable(_ templateModels: [TemplateModel]) {

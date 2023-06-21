@@ -1,5 +1,5 @@
 //
-//  CaseCacheManager.swift
+//  DatabaseCaseTableManager.swift
 //  Probe
 //
 //  Created by Archie You on 2023/6/20.
@@ -8,7 +8,7 @@
 import Cocoa
 import SQLite3
 
-class CaseCacheManager: NSObject {
+class DatabaseCaseTableManager: NSObject {
     private var databaseWrapper: SQLiteDatabaseWrapper
     private var database: OpaquePointer? {
         databaseWrapper.database
@@ -19,17 +19,32 @@ class CaseCacheManager: NSObject {
     private let idColomnName = "id"
     private let nameColomnName = "name"
     
+    private var onceFlag = true
+    private var tableExists: Bool { checkTableExists() }
+    
+    
     init(database: SQLiteDatabaseWrapper) {
         self.databaseWrapper = database
     }
     
-    func createTable(_ models: [TestCaseModel]) {
-        let dropTableQuery = "DROP TABLE IF EXISTS \(tableName)"
-        if sqlite3_exec(database, dropTableQuery, nil, nil, nil) != SQLITE_OK {
-            let errorMessage = String(cString: sqlite3_errmsg(database))
-            print("error dropping table: \(errorMessage)")
+    func checkTableExists() -> Bool {
+        var statement: OpaquePointer?
+        let query = "SELECT name FROM sqlite_master WHERE type='table' AND name='\(tableName)';"
+        
+        if sqlite3_prepare_v2(database, query, -1, &statement, nil) == SQLITE_OK {
+            if sqlite3_step(statement) == SQLITE_ROW {
+                sqlite3_finalize(statement)
+                return true
+            }
         }
         
+        sqlite3_finalize(statement)
+        
+        return false
+    }
+    
+    func createTableIfNotExits() {
+        guard !tableExists else { return }
         
         let createTableSQL = """
         CREATE TABLE IF NOT EXISTS \(tableName) (
@@ -51,6 +66,18 @@ class CaseCacheManager: NSObject {
         }
 
         sqlite3_finalize(createTableStatement)
+    }
+    
+    func dropTable() {
+        let dropTableQuery = "DROP TABLE IF EXISTS \(tableName)"
+        if sqlite3_exec(database, dropTableQuery, nil, nil, nil) != SQLITE_OK {
+            let errorMessage = String(cString: sqlite3_errmsg(database))
+            print("error dropping table: \(errorMessage)")
+        }
+    }
+    
+    func insert(_ models: [TestCaseModel]) {
+        createTableIfNotExits()
         
         for model in models {
             insert(model)
@@ -58,10 +85,13 @@ class CaseCacheManager: NSObject {
     }
     
     func insert(_ model: TestCaseModel) {
+        createTableIfNotExits()
+        
         let insertSQL = """
         INSERT INTO \(tableName)
         (\(idColomnName),
         \(nameColomnName)
+        )
         VALUES
         (?, ?)
         """
@@ -86,6 +116,8 @@ class CaseCacheManager: NSObject {
     }
     
     func remove(_ model: TestCaseModel) {
+        guard tableExists else { return }
+            
         let deleteSQL = "DELETE FROM \(tableName) WHERE \(idColomnName) = ?"
         var deleteStatement: OpaquePointer?
 
@@ -105,6 +137,8 @@ class CaseCacheManager: NSObject {
     }
     
     func update(_ model: TestCaseModel) {
+        guard tableExists else { return }
+        
         let updateSQL = """
         UPDATE \(tableName) SET
         \(nameColomnName) = ?
@@ -131,6 +165,8 @@ class CaseCacheManager: NSObject {
     }
     
     func select() -> [TestCaseModel] {
+        guard tableExists else { return[] }
+        
         let selectSQL = "SELECT * FROM \(tableName) ORDER BY \(idColomnName)"
         var selectStatement: OpaquePointer?
 

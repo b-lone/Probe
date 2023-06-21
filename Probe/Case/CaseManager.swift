@@ -15,15 +15,34 @@ class CaseManager: NSObject {
             currentTestCaseRelay.accept(currentTestCase)
         }
     }
-    var testCases = [TestCaseModel]()
+    var caseModels = [TestCaseModel]()
+    
+    var databaseManager: DataBaseManager
     
     private let currentTestCaseRelay = BehaviorRelay<TestCaseModel?>(value: nil)
     var currentTestCaseObservable: Observable<TestCaseModel?> {
         return currentTestCaseRelay.asObservable()
     }
     
+    init(database: SQLiteDatabaseWrapper) {
+        databaseManager = DataBaseManager(database: database)
+    }
+    
+    func setup() {
+        caseModels = databaseManager.select()
+        currentTestCase = caseModels.first
+    }
+    
     func appendNewCase(_ testCase: TestCaseModel) {
-        testCases.append(testCase)
+        caseModels.append(testCase)
         currentTestCase = testCase
+        
+        databaseManager.insert(testCase)
+    }
+    
+    func update(_ templateModel: TemplateModel) {
+        guard let currentTestCase = currentTestCase else { return }
+        
+        databaseManager.update(currentTestCase, templateModel: templateModel)
     }
 }

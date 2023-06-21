@@ -10,7 +10,7 @@
 		2128AD9A2A41A8C4005D43B9 /* LocalFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128AD992A41A8C4005D43B9 /* LocalFileManager.swift */; };
 		2128AD9C2A41A9A1005D43B9 /* CaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */; };
 		2128AD9E2A41AA1D005D43B9 /* TestCaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */; };
-		2128ADA12A41ACB0005D43B9 /* CaseCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */; };
+		2128ADA12A41ACB0005D43B9 /* DatabaseCaseTableManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA02A41ACB0005D43B9 /* DatabaseCaseTableManager.swift */; };
 		2128ADA82A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */; };
 		2128ADAF2A42CBC2005D43B9 /* NewCaseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */; };
 		2128ADB02A42CBC2005D43B9 /* NewCaseWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */; };
@@ -20,13 +20,14 @@
 		2128ADBA2A42D5DF005D43B9 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADB92A42D5DF005D43B9 /* RxSwift */; };
 		2128ADBE2A42DAC8005D43B9 /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADBD2A42DAC8005D43B9 /* AppContext.swift */; };
 		2128ADC12A42F99A005D43B9 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2128ADC02A42F99A005D43B9 /* SnapKit */; };
+		2128ADC32A430203005D43B9 /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADC22A430203005D43B9 /* DataBaseManager.swift */; };
 		214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67902A1E01EF00BE704B /* AppDelegate.swift */; };
 		214B67932A1E01EF00BE704B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67922A1E01EF00BE704B /* ViewController.swift */; };
 		214B67952A1E01F000BE704B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 214B67942A1E01F000BE704B /* Assets.xcassets */; };
 		214B67982A1E01F000BE704B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 214B67962A1E01F000BE704B /* Main.storyboard */; };
 		214B67A12A1E023200BE704B /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 214B67A02A1E023200BE704B /* CocoaAsyncSocket */; };
 		216D0AC02A25A97600BDA2BF /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0ABF2A25A97600BDA2BF /* SocketManager.swift */; };
-		216D0AC22A25E48E00BDA2BF /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0AC12A25E48E00BDA2BF /* CacheManager.swift */; };
+		216D0AC22A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */; };
 		216D0AC42A25EA3900BDA2BF /* ImportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0AC32A25EA3900BDA2BF /* ImportManager.swift */; };
 		216D0AC62A25FBC600BDA2BF /* TemplateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */; };
 		216D0AC82A2602FA00BDA2BF /* TableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216D0AC72A2602FA00BDA2BF /* TableCellView.swift */; };
@@ -38,11 +39,12 @@
 		2128AD992A41A8C4005D43B9 /* LocalFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileManager.swift; sourceTree = "<group>"; };
 		2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseManager.swift; sourceTree = "<group>"; };
 		2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCaseModel.swift; sourceTree = "<group>"; };
-		2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseCacheManager.swift; sourceTree = "<group>"; };
+		2128ADA02A41ACB0005D43B9 /* DatabaseCaseTableManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseCaseTableManager.swift; sourceTree = "<group>"; };
 		2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDatabaseWrapper.swift; sourceTree = "<group>"; };
 		2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCaseWindowController.swift; sourceTree = "<group>"; };
 		2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewCaseWindowController.xib; sourceTree = "<group>"; };
 		2128ADBD2A42DAC8005D43B9 /* AppContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContext.swift; sourceTree = "<group>"; };
+		2128ADC22A430203005D43B9 /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		214B678D2A1E01EF00BE704B /* Probe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Probe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		214B67902A1E01EF00BE704B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		214B67922A1E01EF00BE704B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -50,7 +52,7 @@
 		214B67972A1E01F000BE704B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		214B67992A1E01F000BE704B /* Probe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Probe.entitlements; sourceTree = "<group>"; };
 		216D0ABF2A25A97600BDA2BF /* SocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
-		216D0AC12A25E48E00BDA2BF /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTemplateTableManager.swift; sourceTree = "<group>"; };
 		216D0AC32A25EA3900BDA2BF /* ImportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportManager.swift; sourceTree = "<group>"; };
 		216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModel.swift; sourceTree = "<group>"; };
 		216D0AC72A2602FA00BDA2BF /* TableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCellView.swift; sourceTree = "<group>"; };
@@ -81,7 +83,6 @@
 			children = (
 				2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */,
 				2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */,
-				2128ADA02A41ACB0005D43B9 /* CaseCacheManager.swift */,
 				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
 				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
 			);
@@ -92,6 +93,9 @@
 			isa = PBXGroup;
 			children = (
 				2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */,
+				216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */,
+				2128ADA02A41ACB0005D43B9 /* DatabaseCaseTableManager.swift */,
+				2128ADC22A430203005D43B9 /* DataBaseManager.swift */,
 			);
 			path = SQLite;
 			sourceTree = "<group>";
@@ -101,7 +105,6 @@
 			children = (
 				216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */,
 				216D0AC72A2602FA00BDA2BF /* TableCellView.swift */,
-				216D0AC12A25E48E00BDA2BF /* CacheManager.swift */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -237,12 +240,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2128ADA12A41ACB0005D43B9 /* CaseCacheManager.swift in Sources */,
+				2128ADA12A41ACB0005D43B9 /* DatabaseCaseTableManager.swift in Sources */,
 				2128ADBE2A42DAC8005D43B9 /* AppContext.swift in Sources */,
 				214B67932A1E01EF00BE704B /* ViewController.swift in Sources */,
 				216D0AC02A25A97600BDA2BF /* SocketManager.swift in Sources */,
-				216D0AC22A25E48E00BDA2BF /* CacheManager.swift in Sources */,
+				216D0AC22A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift in Sources */,
 				2128AD9E2A41AA1D005D43B9 /* TestCaseModel.swift in Sources */,
+				2128ADC32A430203005D43B9 /* DataBaseManager.swift in Sources */,
 				216D0AC62A25FBC600BDA2BF /* TemplateModel.swift in Sources */,
 				2128ADA82A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift in Sources */,
 				216D0AC42A25EA3900BDA2BF /* ImportManager.swift in Sources */,

@@ -12,17 +12,7 @@ import RxCocoa
 class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
     private var exportManager = ExportManager()
     private let socketManager = SocketManager()
-    
-    private lazy var databaseWrapper = {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let databaseURL = documentsURL.appendingPathComponent("database.db")
-        return SQLiteDatabaseWrapper(databasePath: databaseURL.path)
-    }()
-    private lazy var cacheManager = CacheManager(database: databaseWrapper)
-    
     private let launchManager = LaunchManager()
-    private let caseManager = CaseManager()
     private var templateModels: [TemplateModel] {
         AppContext.shared.caseManager.currentTestCase?.templateModels ?? []
     }
@@ -47,12 +37,14 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
         socketManager.delegate = self
         launchManager.delegate = self
 
+        AppContext.shared.caseManager.setup()
+        
         weak var weakSelf = self
         AppContext.shared.caseManager.currentTestCaseObservable.subscribe { _ in
             weakSelf?.update()
         }.disposed(by: disposeBag)
         
-//        templateModels = cacheManager.select()
+//        templateModels = databaseManager.select()
         update()
     }
     
@@ -121,7 +113,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
             templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
             templateModel.useMontageFlag = message["flag"]
             
-            cacheManager.update(templateModel)
+            AppContext.shared.caseManager.update(templateModel)
             
             update()
         }
@@ -139,7 +131,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
             templateModel.errorMsg = message["error_msg"]
             templateModel.filePath = message["file_path"]
             
-            cacheManager.update(templateModel)
+            AppContext.shared.caseManager.update(templateModel)
             
             if success {
                 launchManager.download(templateModel)
@@ -163,7 +155,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
         inProgressTemplateModels.forEach {
             $0.state = .failed
             $0.errorMsg = "crash"
-            cacheManager.update($0)
+            AppContext.shared.caseManager.update($0)
         }
         
         update()
