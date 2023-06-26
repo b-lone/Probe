@@ -167,6 +167,18 @@ class NewCaseWindowController: NSWindowController, NSWindowDelegate {
     }
     
     @objc func confirmButtonClicked() {
+        let name = nameTextField.stringValue
+        if AppContext.shared.caseManager.caseModels.contains(where: { $0.name == name }) {
+            let alert = NSAlert()
+            alert.messageText = "名字重复"
+            alert.informativeText = "请重新输入一个唯一的名字。"
+            alert.alertStyle = .informational
+            alert.addButton(withTitle: "确定")
+
+            alert.runModal()
+            return
+        }
+        
         let ids = importManager.parseFile(importTextField.stringValue)
         let templateModels = ids.map { id in
             TemplateModel(id: id)

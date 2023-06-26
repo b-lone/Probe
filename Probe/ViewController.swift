@@ -8,6 +8,7 @@
 import Cocoa
 import RxSwift
 import RxCocoa
+import SnapKit
 
 class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
     private var exportManager = ExportManager()
@@ -18,18 +19,33 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     }
     private var needResendStartMessage = true
     
+    @IBOutlet weak var headerContainerView: NSView!
+    @IBOutlet weak var separator: NSView!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var progressLabel: NSTextField!
     @IBOutlet weak var successCountLabel: NSTextField!
     @IBOutlet weak var failedCountLabel: NSTextField!
     
     
+    private lazy var headerViewController: HeaderViewController = {
+        let vc = HeaderViewController()
+        return vc
+    }()
     private var newCaseWindowController: NewCaseWindowController?
     
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        addChild(headerViewController)
+        headerContainerView.addSubview(headerViewController.view)
+        headerViewController.view.snp.makeConstraints { make in
+            make.top.leading.bottom.trailing.equalToSuperview()
+        }
+        
+        separator.wantsLayer = true
+        separator.layer?.backgroundColor = NSColor.gray.cgColor
         
         successCountLabel.textColor = TemplateModel.State.success.color
         failedCountLabel.textColor = TemplateModel.State.failed.color

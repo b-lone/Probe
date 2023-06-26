@@ -12,7 +12,9 @@ import RxCocoa
 class CaseManager: NSObject {
     var currentTestCase: TestCaseModel? {
         didSet {
-            currentTestCaseRelay.accept(currentTestCase)
+            if oldValue?.id != currentTestCase?.id {
+                currentTestCaseRelay.accept(currentTestCase)
+            }
         }
     }
     var caseModels = [TestCaseModel]()
@@ -44,5 +46,10 @@ class CaseManager: NSObject {
         guard let currentTestCase = currentTestCase else { return }
         
         databaseManager.update(currentTestCase, templateModel: templateModel)
+    }
+    
+    func changeCurrentTestCase(to index: Int) {
+        guard index >= 0, index < caseModels.count else { return }
+        currentTestCase = caseModels[index]
     }
 }
