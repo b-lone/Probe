@@ -21,7 +21,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     
     @IBOutlet weak var headerContainerView: NSView!
     @IBOutlet weak var separator: NSView!
-    @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var tableContainerView: NSView!
     @IBOutlet weak var progressLabel: NSTextField!
     @IBOutlet weak var successCountLabel: NSTextField!
     @IBOutlet weak var failedCountLabel: NSTextField!
@@ -29,6 +29,10 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     
     private lazy var headerViewController: HeaderViewController = {
         let vc = HeaderViewController()
+        return vc
+    }()
+    private lazy var templateTableViewController: TemplateTableViewController = {
+        let vc = TemplateTableViewController()
         return vc
     }()
     private var newCaseWindowController: NewCaseWindowController?
@@ -46,6 +50,12 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
         
         separator.wantsLayer = true
         separator.layer?.backgroundColor = NSColor.gray.cgColor
+        
+        addChild(templateTableViewController)
+        tableContainerView.addSubview(templateTableViewController.view)
+        templateTableViewController.view.snp.makeConstraints { make in
+            make.top.leading.bottom.trailing.equalToSuperview()
+        }
         
         successCountLabel.textColor = TemplateModel.State.success.color
         failedCountLabel.textColor = TemplateModel.State.failed.color
@@ -65,8 +75,6 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     }
     
     private func update() {
-        tableView.reloadData()
-        
         let totalCount = templateModels.count
         let finishedTemplateModels = templateModels.filter { $0.state == .failed || $0.state == .success }
         let finishedCount = finishedTemplateModels.count
@@ -180,22 +188,6 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
 // MARK: - LaunchManagerDelegate
     func onDownloadFinished(_ templateId: String) {
         socketManager.sendEndMessage()
-    }
-    
-// MARK: - NSTableViewDelegate
-    func numberOfRows(in tableView: NSTableView) -> Int {
-        return templateModels.count
-    }
-    
-    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "TableCellView"), owner: nil) as? TableCellView
-        view?.setup(templateModels[row])
-        var frame = view?.frame
-        frame?.size.width = tableView.frame.width
-        if let frame = frame {
-            view?.frame = frame
-        }
-        return view ?? TableCellView()
     }
 }
 

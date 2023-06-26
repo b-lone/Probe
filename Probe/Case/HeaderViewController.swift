@@ -43,7 +43,7 @@ class HeaderViewController: NSViewController, NSComboBoxDelegate, NSComboBoxData
         self.view .addSubview(comboBox)
         comboBox.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
             make.width.equalTo(120)
         }
         

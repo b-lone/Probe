@@ -86,3 +86,30 @@ class TemplateModel: NSObject {
         return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(useMontageFlag ?? "-")\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")"
     }
 }
+
+class ColumnInfo {
+    let identifier: String
+    let width: CGFloat
+    
+    init(identifier: String, width: CGFloat) {
+        self.identifier = identifier
+        self.width = width
+    }
+}
+
+extension TemplateModel {
+    static var columnInfos: [ColumnInfo] {
+        return [
+            ColumnInfo(identifier: "id", width: 72),
+            ColumnInfo(identifier: "name", width: 72),
+            ColumnInfo(identifier: "state", width: 72),
+            ColumnInfo(identifier: "use montage", width: 72),
+            ColumnInfo(identifier: "start memory", width: 72),
+            ColumnInfo(identifier: "end memory", width: 72),
+            ColumnInfo(identifier: "max memory", width: 72),
+            ColumnInfo(identifier: "duration", width: 72),
+            ColumnInfo(identifier: "error", width: 160),
+            ColumnInfo(identifier: "filepath", width: 160),
+        ]
+    }
+}
