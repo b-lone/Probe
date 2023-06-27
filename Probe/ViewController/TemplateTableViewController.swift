@@ -9,14 +9,8 @@ import Cocoa
 import RxCocoa
 import RxSwift
 
-class TemplateTableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+class TemplateTableViewController: BaseViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet weak var tableView: NSTableView!
-    
-    private var caseManager: CaseManager {
-        AppContext.shared.caseManager
-    }
-    
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +22,10 @@ class TemplateTableViewController: NSViewController, NSTableViewDelegate, NSTabl
     
         weak var weakSelf = self
         caseManager.currentTestCaseObservable.subscribe { _ in
+            weakSelf?.tableView.reloadData()
+        }.disposed(by: disposeBag)
+        
+        caseManager.templateModelSubject.subscribe { _ in
             weakSelf?.tableView.reloadData()
         }.disposed(by: disposeBag)
     }
@@ -55,6 +53,7 @@ class TemplateTableViewController: NSViewController, NSTableViewDelegate, NSTabl
         textField.isBezeled = false
         textField.isEditable = false
         textField.backgroundColor = .clear
+        textField.alignment = .center
         
         if columnIdentifier.rawValue == "id" {
             textField.stringValue = model.id

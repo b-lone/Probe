@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
-class HeaderViewController: NSViewController, NSComboBoxDelegate, NSComboBoxDataSource {
+class HeaderViewController: BaseViewController, NSComboBoxDelegate, NSComboBoxDataSource {
     
     private lazy var comboBox: NSComboBox = {
         let view = NSComboBox()
@@ -21,16 +21,8 @@ class HeaderViewController: NSViewController, NSComboBoxDelegate, NSComboBoxData
         return view
     }()
     
-    private var caseManager: CaseManager {
-        AppContext.shared.caseManager
-    }
-    
     private let selectedIndexReplay = BehaviorRelay<Int?>(value: nil)
-    var selectedIndexObservable: Observable<Int?> {
-        selectedIndexReplay.asObservable()
-    }
-    
-    private let disposeBag = DisposeBag()
+    lazy var selectedIndexObservable: Observable<Int?> = selectedIndexReplay.asObservable()
     
     override func loadView() {
         self.view = NSView()

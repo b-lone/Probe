@@ -24,6 +24,8 @@
 		2128ADC52A494288005D43B9 /* HeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADC42A494288005D43B9 /* HeaderViewController.swift */; };
 		2128ADC82A496078005D43B9 /* TemplateTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */; };
 		2128ADC92A496078005D43B9 /* TemplateTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */; };
+		2128ADCC2A499B98005D43B9 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */; };
+		2128ADCE2A49A259005D43B9 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCD2A49A259005D43B9 /* BaseViewController.swift */; };
 		214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67902A1E01EF00BE704B /* AppDelegate.swift */; };
 		214B67932A1E01EF00BE704B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67922A1E01EF00BE704B /* ViewController.swift */; };
 		214B67952A1E01F000BE704B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 214B67942A1E01F000BE704B /* Assets.xcassets */; };
@@ -50,6 +52,8 @@
 		2128ADC42A494288005D43B9 /* HeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderViewController.swift; sourceTree = "<group>"; };
 		2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateTableViewController.swift; sourceTree = "<group>"; };
 		2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TemplateTableViewController.xib; sourceTree = "<group>"; };
+		2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		2128ADCD2A49A259005D43B9 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		214B678D2A1E01EF00BE704B /* Probe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Probe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		214B67902A1E01EF00BE704B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		214B67922A1E01EF00BE704B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -85,11 +89,8 @@
 		2128AD9F2A41AC88005D43B9 /* Case */ = {
 			isa = PBXGroup;
 			children = (
-				2128ADC42A494288005D43B9 /* HeaderViewController.swift */,
 				2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */,
 				2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */,
-				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
-				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
 			);
 			path = Case;
 			sourceTree = "<group>";
@@ -109,10 +110,23 @@
 			isa = PBXGroup;
 			children = (
 				216D0AC52A25FBC600BDA2BF /* TemplateModel.swift */,
-				2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */,
-				2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */,
 			);
 			path = Template;
+			sourceTree = "<group>";
+		};
+		2128ADCA2A499B21005D43B9 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				2128ADC42A494288005D43B9 /* HeaderViewController.swift */,
+				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
+				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
+				2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */,
+				2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */,
+				214B67922A1E01EF00BE704B /* ViewController.swift */,
+				2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */,
+				2128ADCD2A49A259005D43B9 /* BaseViewController.swift */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 		214B67842A1E01EF00BE704B = {
@@ -135,21 +149,21 @@
 		214B678F2A1E01EF00BE704B /* Probe */ = {
 			isa = PBXGroup;
 			children = (
-				2128ADB12A42CD22005D43B9 /* Template */,
-				2128ADA42A41B210005D43B9 /* SQLite */,
-				2128AD9F2A41AC88005D43B9 /* Case */,
+				2128ADBD2A42DAC8005D43B9 /* AppContext.swift */,
 				214B67902A1E01EF00BE704B /* AppDelegate.swift */,
-				214B67922A1E01EF00BE704B /* ViewController.swift */,
-				216D0AC32A25EA3900BDA2BF /* ImportManager.swift */,
 				214B67942A1E01F000BE704B /* Assets.xcassets */,
+				2128AD9F2A41AC88005D43B9 /* Case */,
+				216D0B242A299C5000BDA2BF /* ExportManager.swift */,
+				216D0AC32A25EA3900BDA2BF /* ImportManager.swift */,
+				216D0AE82A28785700BDA2BF /* LaunchManager.swift */,
+				2128AD992A41A8C4005D43B9 /* LocalFileManager.swift */,
 				214B67962A1E01F000BE704B /* Main.storyboard */,
+				216D0AD92A270A8200BDA2BF /* Probe-Bridging-Header.h */,
 				214B67992A1E01F000BE704B /* Probe.entitlements */,
 				216D0ABF2A25A97600BDA2BF /* SocketManager.swift */,
-				216D0AD92A270A8200BDA2BF /* Probe-Bridging-Header.h */,
-				216D0AE82A28785700BDA2BF /* LaunchManager.swift */,
-				216D0B242A299C5000BDA2BF /* ExportManager.swift */,
-				2128AD992A41A8C4005D43B9 /* LocalFileManager.swift */,
-				2128ADBD2A42DAC8005D43B9 /* AppContext.swift */,
+				2128ADA42A41B210005D43B9 /* SQLite */,
+				2128ADB12A42CD22005D43B9 /* Template */,
+				2128ADCA2A499B21005D43B9 /* ViewController */,
 			);
 			path = Probe;
 			sourceTree = "<group>";
@@ -252,6 +266,7 @@
 				214B67932A1E01EF00BE704B /* ViewController.swift in Sources */,
 				216D0AC02A25A97600BDA2BF /* SocketManager.swift in Sources */,
 				216D0AC22A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift in Sources */,
+				2128ADCE2A49A259005D43B9 /* BaseViewController.swift in Sources */,
 				2128ADC82A496078005D43B9 /* TemplateTableViewController.swift in Sources */,
 				2128AD9E2A41AA1D005D43B9 /* TestCaseModel.swift in Sources */,
 				2128ADC32A430203005D43B9 /* DataBaseManager.swift in Sources */,
@@ -260,6 +275,7 @@
 				216D0AC42A25EA3900BDA2BF /* ImportManager.swift in Sources */,
 				2128AD9C2A41A9A1005D43B9 /* CaseManager.swift in Sources */,
 				2128AD9A2A41A8C4005D43B9 /* LocalFileManager.swift in Sources */,
+				2128ADCC2A499B98005D43B9 /* StatisticsViewController.swift in Sources */,
 				216D0AE92A28785700BDA2BF /* LaunchManager.swift in Sources */,
 				214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */,
 				2128ADAF2A42CBC2005D43B9 /* NewCaseWindowController.swift in Sources */,

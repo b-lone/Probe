@@ -100,8 +100,8 @@ class ColumnInfo {
 extension TemplateModel {
     static var columnInfos: [ColumnInfo] {
         return [
-            ColumnInfo(identifier: "id", width: 72),
-            ColumnInfo(identifier: "name", width: 72),
+            ColumnInfo(identifier: "id", width: 64),
+            ColumnInfo(identifier: "name", width: 84),
             ColumnInfo(identifier: "state", width: 72),
             ColumnInfo(identifier: "use montage", width: 72),
             ColumnInfo(identifier: "start memory", width: 72),

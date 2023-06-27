@@ -22,9 +22,8 @@ class CaseManager: NSObject {
     var databaseManager: DataBaseManager
     
     private let currentTestCaseRelay = BehaviorRelay<TestCaseModel?>(value: nil)
-    var currentTestCaseObservable: Observable<TestCaseModel?> {
-        return currentTestCaseRelay.asObservable()
-    }
+    lazy var currentTestCaseObservable: Observable<TestCaseModel?> = currentTestCaseRelay.asObservable()
+    let templateModelSubject = PublishSubject<TemplateModel>()
     
     init(database: SQLiteDatabaseWrapper) {
         databaseManager = DataBaseManager(database: database)
@@ -42,10 +41,14 @@ class CaseManager: NSObject {
         databaseManager.insert(testCase)
     }
     
-    func update(_ templateModel: TemplateModel) {
+    func update(_ templateModel: TemplateModel, needSave: Bool = false) {
         guard let currentTestCase = currentTestCase else { return }
         
-        databaseManager.update(currentTestCase, templateModel: templateModel)
+        if needSave {
+            databaseManager.update(currentTestCase, templateModel: templateModel)
+        }
+        
+        templateModelSubject.onNext(templateModel)
     }
     
     func changeCurrentTestCase(to index: Int) {

@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
+class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
     private var exportManager = ExportManager()
     private let socketManager = SocketManager()
     private let launchManager = LaunchManager()
@@ -22,10 +22,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     @IBOutlet weak var headerContainerView: NSView!
     @IBOutlet weak var separator: NSView!
     @IBOutlet weak var tableContainerView: NSView!
-    @IBOutlet weak var progressLabel: NSTextField!
-    @IBOutlet weak var successCountLabel: NSTextField!
-    @IBOutlet weak var failedCountLabel: NSTextField!
-    
+    @IBOutlet weak var statisticsContainerView: NSView!
     
     private lazy var headerViewController: HeaderViewController = {
         let vc = HeaderViewController()
@@ -35,9 +32,11 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
         let vc = TemplateTableViewController()
         return vc
     }()
+    private lazy var statisticsViewController: StatisticsViewController = {
+        let vc = StatisticsViewController()
+        return vc
+    }()
     private var newCaseWindowController: NewCaseWindowController?
-    
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,33 +56,16 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
             make.top.leading.bottom.trailing.equalToSuperview()
         }
         
-        successCountLabel.textColor = TemplateModel.State.success.color
-        failedCountLabel.textColor = TemplateModel.State.failed.color
+        addChild(statisticsViewController)
+        statisticsContainerView.addSubview(statisticsViewController.view)
+        statisticsViewController.view.snp.makeConstraints { make in
+            make.top.leading.bottom.trailing.equalToSuperview()
+        }
         
         socketManager.delegate = self
         launchManager.delegate = self
 
         AppContext.shared.caseManager.setup()
-        
-        weak var weakSelf = self
-        AppContext.shared.caseManager.currentTestCaseObservable.subscribe { _ in
-            weakSelf?.update()
-        }.disposed(by: disposeBag)
-        
-//        templateModels = databaseManager.select()
-        update()
-    }
-    
-    private func update() {
-        let totalCount = templateModels.count
-        let finishedTemplateModels = templateModels.filter { $0.state == .failed || $0.state == .success }
-        let finishedCount = finishedTemplateModels.count
-        let successTemplateModels = finishedTemplateModels.filter { $0.state == .success }
-        let successCount = successTemplateModels.count
-        
-        progressLabel.stringValue = "\(finishedCount)/\(totalCount)"
-        successCountLabel.stringValue = "\(successCount)"
-        failedCountLabel.stringValue = "\(finishedCount - successCount)"
     }
     
     private func sendStartMessage() {
@@ -116,18 +98,19 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
     @IBAction func onEnd(_ sender: Any) {
         launchManager.end()
     }
+
 // MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.state = .inProgress
-            update()
+            caseManager.update(templateModel)
         }
     }
     
     func onUpdate(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
             templateModel.name = message["name"] ?? "unknown"
-            update()
+            caseManager.update(templateModel)
         }
     }
     
@@ -137,9 +120,7 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
             templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
             templateModel.useMontageFlag = message["flag"]
             
-            AppContext.shared.caseManager.update(templateModel)
-            
-            update()
+            caseManager.update(templateModel, needSave: true)
         }
     }
     
@@ -155,15 +136,13 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
             templateModel.errorMsg = message["error_msg"]
             templateModel.filePath = message["file_path"]
             
-            AppContext.shared.caseManager.update(templateModel)
+            caseManager.update(templateModel, needSave: true)
             
             if success {
                 launchManager.download(templateModel)
             } else {
                 socketManager.sendEndMessage()
             }
-            
-            update()
         }
     }
     
@@ -179,10 +158,8 @@ class ViewController: NSViewController, SocketManagerDelegate, LaunchManagerDele
         inProgressTemplateModels.forEach {
             $0.state = .failed
             $0.errorMsg = "crash"
-            AppContext.shared.caseManager.update($0)
+            self.caseManager.update($0)
         }
-        
-        update()
     }
     
 // MARK: - LaunchManagerDelegate
