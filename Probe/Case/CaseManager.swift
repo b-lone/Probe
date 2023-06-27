@@ -14,6 +14,7 @@ class CaseManager: NSObject {
         didSet {
             if oldValue?.id != currentTestCase?.id {
                 currentTestCaseRelay.accept(currentTestCase)
+                UserDefaults.standard.set(currentTestCase?.id, forKey: "current_id")
             }
         }
     }
@@ -42,7 +43,8 @@ class CaseManager: NSObject {
     func setup() {
         caseModels = databaseManager.select()
         
-        currentTestCase = caseModels.first
+        let currentId = UserDefaults.standard.integer(forKey: "current_id")
+        currentTestCase = caseModels.first{ $0.id == currentId }
     }
     
     func appendNewCase(_ testCase: TestCaseModel) {

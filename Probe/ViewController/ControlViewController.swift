@@ -104,7 +104,7 @@ class ControlViewController: BaseViewController {
     
     @objc
     private func onEnd(_ sender: Any) {
-        launchManager.end()
+        launchManager.sendEndMessage()
     }
     
     @objc

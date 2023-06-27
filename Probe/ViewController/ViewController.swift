@@ -127,7 +127,7 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
             caseManager.update(templateModel, needSave: true)
             
             if success {
-                launchManager.download(templateModel)
+                launchManager.sendDownloadMessage(templateModel)
             } else {
                 socketManager.sendEndMessage()
             }
@@ -141,7 +141,7 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
     func onDisconnect() {
         needResendStartMessage = true
         
-        launchManager.launch()
+        launchManager.sendLaunchMessage()
         let inProgressTemplateModels = templateModels.filter { $0.state == .inProgress }
         inProgressTemplateModels.forEach {
             $0.state = .failed

@@ -18,21 +18,22 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     private var date: Date?
     weak var delegate: LaunchManagerDelegate?
     
-    func launch() {
+    func sendLaunchMessage() {
         guard !checkOverrun() else { return }
         
         date = Date.now
         
-        sendLaunchMessage()
+        let message = "{launch}"
+        write(message)
     }
     
-    func download(_ template: TemplateModel) {
+    func sendDownloadMessage(_ template: TemplateModel) {
         guard let filePath = template.filePath else { return }
         let message = "{download:\(template.id)&\(filePath)}"
         write(message)
     }
     
-    func end() {
+    func sendEndMessage() {
         let message = "{end}"
         write(message)
     }
@@ -65,11 +66,6 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
         } catch {
             print("Error connecting to server: \(error)")
         }
-    }
-    
-    private func sendLaunchMessage() {
-        let message = "{launch}"
-        write(message)
     }
     
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
@@ -146,112 +142,3 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
         return (nil, nil)
     }
 }
-
-//func relaunch1() {
-//    DispatchQueue.global(qos: .default).async {
-//        let appBundle = Bundle.main
-//        if let executableURL = appBundle.url(forResource: "ios-deploy", withExtension: nil) {
-//            let process = Process()
-//            process.executableURL = executableURL
-//            process.arguments = ["--justlaunch", "--noinstall", "--debug", "--bundle", "/Users/archie/Library/Developer/Xcode/DerivedData/bili-studio-agjocrxtfxnuzqfnyzfzikswasiu/Build/Products/Debug-iphoneos/bazel-out/applebin_ios-ios_arm64-dbg-ST-3a8ae290c50a/bin/bilistudio-universal/bili-studio.app"]
-//
-//            let pipe = Pipe()
-//            process.standardOutput = pipe
-//
-//            do {
-//                try process.run()
-//                process.waitUntilExit()
-//
-//                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-//                if let output = String(data: data, encoding: .utf8) {
-//                    print(output)
-//                }
-//            } catch {
-//                print("Failed to run the executable: \(error)")
-//            }
-//        } else {
-//            print("Executable not found in the app bundle.")
-//        }
-//    }
-//}
-//
-//func relaunch2() {
-//    DispatchQueue.global(qos: .default).async {
-//        let command = "ios-deploy --justlaunch --noinstall --debug --bundle /Users/archie/Library/Developer/Xcode/DerivedData/bili-studio-agjocrxtfxnuzqfnyzfzikswasiu/Build/Products/Debug-iphoneos/bazel-out/applebin_ios-ios_arm64-dbg-ST-3a8ae290c50a/bin/bilistudio-universal/bili-studio.app"
-//
-//        let scriptSource = """
-//        tell application "Terminal"
-//            do script "\(command)"
-//        end tell
-//        """
-//
-//        if let script = NSAppleScript(source: scriptSource) {
-//            var error: NSDictionary?
-//            script.executeAndReturnError(&error)
-//
-//            if let error = error {
-//                print("Failed to execute script: \(error)")
-//            }
-//        } else {
-//            print("Failed to create NSAppleScript instance.")
-//        }
-//    }
-//}
-//
-//func relaunch3() {
-//    let appBundle = Bundle.main
-//    if let scriptURL = appBundle.url(forResource: "script", withExtension: "sh") {
-//        let configuration = NSWorkspace.OpenConfiguration()
-//        NSWorkspace.shared.open([scriptURL], withApplicationAt: URL(string: "/System/Applications/Utilities/Terminal.app")!, configuration: configuration, completionHandler: {
-//            app, error in
-//            print(error as Any)
-//        })
-//    }
-//}
-//
-//func relaunch4() {
-//    DispatchQueue.global(qos: .default).async {
-//        if let executableURL = URL(string:"file://opt/homebrew/Cellar/ios-deploy/1.12.2/bin/ios-deploy") {
-//            let process = Process()
-//            process.executableURL = executableURL
-//            process.arguments = ["--justlaunch", "--noinstall", "--debug", "--bundle", "/Users/archie/Library/Developer/Xcode/DerivedData/bili-studio-agjocrxtfxnuzqfnyzfzikswasiu/Build/Products/Debug-iphoneos/bazel-out/applebin_ios-ios_arm64-dbg-ST-3a8ae290c50a/bin/bilistudio-universal/bili-studio.app"]
-//
-//            let pipe = Pipe()
-//            process.standardOutput = pipe
-//
-//            do {
-//                try process.run()
-//                process.waitUntilExit()
-//
-//                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-//                if let output = String(data: data, encoding: .utf8) {
-//                    print(output)
-//                }
-//            } catch {
-//                print("Failed to run the executable: \(error)")
-//            }
-//        } else {
-//            print("Executable not found in the app bundle.")
-//        }
-//    }
-//}
-//
-//func relaunch5() {
-//    DispatchQueue.global(qos: .default).async {
-//        let task = Process()
-//        let pipe = Pipe()
-//
-//        task.standardOutput = pipe
-//        task.standardError = pipe
-//        task.arguments = ["-c", "ios-deploy --justlaunch --noinstall --debug --bundle /Users/archie/Library/Developer/Xcode/DerivedData/bili-studio-agjocrxtfxnuzqfnyzfzikswasiu/Build/Products/Debug-iphoneos/bazel-out/applebin_ios-ios_arm64-dbg-ST-3a8ae290c50a/bin/bilistudio-universal/bili-studio.app"]
-//        task.launchPath = "/bin/bash"
-//        task.standardInput = nil
-//        task.launch()
-//        task.waitUntilExit()
-//
-//        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-//        let output = String(data: data, encoding: .utf8)!
-//
-//        print(output)
-//    }
-//}
