@@ -26,6 +26,7 @@
 		2128ADC92A496078005D43B9 /* TemplateTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */; };
 		2128ADCC2A499B98005D43B9 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */; };
 		2128ADCE2A49A259005D43B9 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCD2A49A259005D43B9 /* BaseViewController.swift */; };
+		2128ADD02A4A8D1D005D43B9 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */; };
 		214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67902A1E01EF00BE704B /* AppDelegate.swift */; };
 		214B67932A1E01EF00BE704B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67922A1E01EF00BE704B /* ViewController.swift */; };
 		214B67952A1E01F000BE704B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 214B67942A1E01F000BE704B /* Assets.xcassets */; };
@@ -54,6 +55,7 @@
 		2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TemplateTableViewController.xib; sourceTree = "<group>"; };
 		2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		2128ADCD2A49A259005D43B9 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 		214B678D2A1E01EF00BE704B /* Probe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Probe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		214B67902A1E01EF00BE704B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		214B67922A1E01EF00BE704B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
 				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
 				2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */,
+				2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */,
 				2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */,
 				214B67922A1E01EF00BE704B /* ViewController.swift */,
 				2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */,
@@ -274,6 +277,7 @@
 				2128ADA82A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift in Sources */,
 				216D0AC42A25EA3900BDA2BF /* ImportManager.swift in Sources */,
 				2128AD9C2A41A9A1005D43B9 /* CaseManager.swift in Sources */,
+				2128ADD02A4A8D1D005D43B9 /* ControlViewController.swift in Sources */,
 				2128AD9A2A41A8C4005D43B9 /* LocalFileManager.swift in Sources */,
 				2128ADCC2A499B98005D43B9 /* StatisticsViewController.swift in Sources */,
 				216D0AE92A28785700BDA2BF /* LaunchManager.swift in Sources */,

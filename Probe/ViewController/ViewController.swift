@@ -11,7 +11,6 @@ import RxCocoa
 import SnapKit
 
 class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
-    private var exportManager = ExportManager()
     private let socketManager = SocketManager()
     private let launchManager = LaunchManager()
     private var templateModels: [TemplateModel] {
@@ -23,6 +22,7 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
     @IBOutlet weak var separator: NSView!
     @IBOutlet weak var tableContainerView: NSView!
     @IBOutlet weak var statisticsContainerView: NSView!
+    @IBOutlet weak var controlContainerView: NSView!
     
     private lazy var headerViewController: HeaderViewController = {
         let vc = HeaderViewController()
@@ -36,7 +36,13 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
         let vc = StatisticsViewController()
         return vc
     }()
-    private var newCaseWindowController: NewCaseWindowController?
+    private lazy var controlViewController: ControlViewController = {
+        weak var weakSelf = self
+        let vc = ControlViewController(socketManager: socketManager, launchManager: launchManager, sendStartMessage: {
+            weakSelf?.sendStartMessage()
+        })
+        return vc
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,6 +68,12 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
             make.top.leading.bottom.trailing.equalToSuperview()
         }
         
+        addChild(controlViewController)
+        controlContainerView.addSubview(controlViewController.view)
+        controlViewController.view.snp.makeConstraints { make in
+            make.top.leading.bottom.trailing.equalToSuperview()
+        }
+        
         socketManager.delegate = self
         launchManager.delegate = self
 
@@ -75,30 +87,6 @@ class ViewController: BaseViewController, SocketManagerDelegate, LaunchManagerDe
         socketManager.sendStartMessage(templateModels.filter({ $0.state == .ready }))
     }
     
-// MARK: - IBAction
-    @IBAction func onImport(_ sender: Any) {
-        newCaseWindowController = NewCaseWindowController()
-        newCaseWindowController?.window?.center()
-        newCaseWindowController?.window?.makeKeyAndOrderFront(nil)
-    }
-    
-    @IBAction func onStart(_ sender: Any) {
-        socketManager.connectToServer()
-        sendStartMessage()
-    }
-    
-    @IBAction func onExport(_ sender: Any) {
-        exportManager.exprot(templateModels)
-    }
-    
-    @IBAction func onExportFailedIds(_ sender: Any) {
-        exportManager.exportFailedIds(templateModels)
-    }
-    
-    @IBAction func onEnd(_ sender: Any) {
-        launchManager.end()
-    }
-
 // MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
         if let id = message["id"], let templateModel = templateModels.first(where: { $0.id == id }) {
