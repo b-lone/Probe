@@ -51,6 +51,8 @@ class ControlViewController: BaseViewController {
             ("Export", #selector(onExport(_:))),
             ("Export Failed IDs", #selector(onExportFailedIds(_:))),
             ("End", #selector(onEnd(_:))),
+            ("Reset", #selector(onReset(_:))),
+            ("Delete", #selector(onDelete(_:))),
         ]
         
         for buttonInfo in buttonInfos {
@@ -103,5 +105,19 @@ class ControlViewController: BaseViewController {
     @objc
     private func onEnd(_ sender: Any) {
         launchManager.end()
+    }
+    
+    @objc
+    private func onReset(_ sender: Any) {
+        guard let currentTestCase = caseManager.currentTestCase else { return }
+        let templateModels = currentTestCase.templateModels.map { TemplateModel(id: $0.id) }
+        currentTestCase.templateModels = templateModels
+        caseManager.reset(currentTestCase)
+    }
+    
+    @objc
+    private func onDelete(_ sender: Any) {
+        guard let currentTestCase = caseManager.currentTestCase else { return }
+        caseManager.delete(currentTestCase)
     }
 }

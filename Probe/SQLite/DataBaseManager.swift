@@ -24,6 +24,17 @@ class DataBaseManager: NSObject {
         manager.createTable(model.templateModels)
     }
     
+    func reset(_ model: TestCaseModel) {
+        let manager = getTemplateTableManager(model.id)
+        manager.createTable(model.templateModels)
+    }
+    
+    func delete(_ model: TestCaseModel) {
+        caseTableManager.delete(model)
+        let manager = getTemplateTableManager(model.id)
+        manager.dropTable()
+    }
+    
     func update(_ caseModel: TestCaseModel, templateModel: TemplateModel) {
         caseTableManager.update(caseModel)
         let templateTableManager = getTemplateTableManager(caseModel.id)

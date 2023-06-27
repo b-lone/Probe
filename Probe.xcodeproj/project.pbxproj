@@ -91,8 +91,8 @@
 		2128AD9F2A41AC88005D43B9 /* Case */ = {
 			isa = PBXGroup;
 			children = (
-				2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */,
 				2128AD9B2A41A9A1005D43B9 /* CaseManager.swift */,
+				2128AD9D2A41AA1D005D43B9 /* TestCaseModel.swift */,
 			);
 			path = Case;
 			sourceTree = "<group>";
@@ -100,10 +100,10 @@
 		2128ADA42A41B210005D43B9 /* SQLite */ = {
 			isa = PBXGroup;
 			children = (
-				2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */,
-				216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */,
 				2128ADA02A41ACB0005D43B9 /* DatabaseCaseTableManager.swift */,
 				2128ADC22A430203005D43B9 /* DataBaseManager.swift */,
+				216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */,
+				2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */,
 			);
 			path = SQLite;
 			sourceTree = "<group>";
@@ -119,15 +119,15 @@
 		2128ADCA2A499B21005D43B9 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				2128ADCD2A49A259005D43B9 /* BaseViewController.swift */,
+				2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */,
 				2128ADC42A494288005D43B9 /* HeaderViewController.swift */,
 				2128ADAD2A42CBC2005D43B9 /* NewCaseWindowController.swift */,
 				2128ADAE2A42CBC2005D43B9 /* NewCaseWindowController.xib */,
+				2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */,
 				2128ADC62A496078005D43B9 /* TemplateTableViewController.swift */,
-				2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */,
 				2128ADC72A496078005D43B9 /* TemplateTableViewController.xib */,
 				214B67922A1E01EF00BE704B /* ViewController.swift */,
-				2128ADCB2A499B98005D43B9 /* StatisticsViewController.swift */,
-				2128ADCD2A49A259005D43B9 /* BaseViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";

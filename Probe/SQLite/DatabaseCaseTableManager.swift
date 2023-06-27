@@ -115,7 +115,7 @@ class DatabaseCaseTableManager: NSObject {
         sqlite3_finalize(insertStatement)
     }
     
-    func remove(_ model: TestCaseModel) {
+    func delete(_ model: TestCaseModel) {
         guard tableExists else { return }
             
         let deleteSQL = "DELETE FROM \(tableName) WHERE \(idColomnName) = ?"

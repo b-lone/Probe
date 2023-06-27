@@ -17,13 +17,23 @@ class CaseManager: NSObject {
             }
         }
     }
-    var caseModels = [TestCaseModel]()
+    var caseModels = [TestCaseModel]() {
+        didSet {
+            caseModelsRelay.accept(caseModels)
+        }
+    }
     
     var databaseManager: DataBaseManager
     
     private let currentTestCaseRelay = BehaviorRelay<TestCaseModel?>(value: nil)
     lazy var currentTestCaseObservable: Observable<TestCaseModel?> = currentTestCaseRelay.asObservable()
-    let templateModelSubject = PublishSubject<TemplateModel>()
+    
+    private lazy var caseModelsRelay = BehaviorRelay<[TestCaseModel]>(value: caseModels)
+    lazy var caseModelsObservable: Observable<[TestCaseModel]> = caseModelsRelay.asObservable()
+    
+    let templateModelSubject = PublishSubject<TemplateModel?>()
+    
+    let disposeBag = DisposeBag()
     
     init(database: SQLiteDatabaseWrapper) {
         databaseManager = DataBaseManager(database: database)
@@ -31,6 +41,7 @@ class CaseManager: NSObject {
     
     func setup() {
         caseModels = databaseManager.select()
+        
         currentTestCase = caseModels.first
     }
     
@@ -39,6 +50,20 @@ class CaseManager: NSObject {
         currentTestCase = testCase
         
         databaseManager.insert(testCase)
+    }
+    
+    func reset(_ testCase: TestCaseModel) {
+        databaseManager.reset(testCase)
+        templateModelSubject.onNext(nil)
+    }
+    
+    func delete(_ testCase: TestCaseModel) {
+        caseModels.removeAll { $0.id == testCase.id }
+        
+        databaseManager.delete(testCase)
+        if testCase.id == currentTestCase?.id {
+            currentTestCase = caseModels.first
+        }
     }
     
     func update(_ templateModel: TemplateModel, needSave: Bool = false) {

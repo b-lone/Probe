@@ -35,11 +35,7 @@ class DatabaseTemplateTableManager: NSObject {
     }
     
     func createTable(_ templateModels: [TemplateModel]) {
-        let dropTableQuery = "DROP TABLE IF EXISTS \(tableName)"
-        if sqlite3_exec(database, dropTableQuery, nil, nil, nil) != SQLITE_OK {
-            let errorMessage = String(cString: sqlite3_errmsg(database))
-            print("error dropping table: \(errorMessage)")
-        }
+        dropTable()
         
         
         let createTableSQL = """
@@ -74,6 +70,14 @@ class DatabaseTemplateTableManager: NSObject {
         
         for templateModel in templateModels {
             insert(templateModel)
+        }
+    }
+    
+    func dropTable() {
+        let dropTableQuery = "DROP TABLE IF EXISTS \(tableName)"
+        if sqlite3_exec(database, dropTableQuery, nil, nil, nil) != SQLITE_OK {
+            let errorMessage = String(cString: sqlite3_errmsg(database))
+            print("error dropping table: \(errorMessage)")
         }
     }
     
@@ -132,7 +136,7 @@ class DatabaseTemplateTableManager: NSObject {
         sqlite3_finalize(insertStatement)
     }
     
-    func remove(_ model: TemplateModel) {
+    func delete(_ model: TemplateModel) {
         let deleteSQL = "DELETE FROM \(tableName) WHERE \(idColomnName) = ?"
         var deleteStatement: OpaquePointer?
 
