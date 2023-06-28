@@ -28,6 +28,9 @@
 		2128ADCE2A49A259005D43B9 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCD2A49A259005D43B9 /* BaseViewController.swift */; };
 		2128ADD02A4A8D1D005D43B9 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */; };
 		2128ADD22A4AC6BF005D43B9 /* RunningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADD12A4AC6BF005D43B9 /* RunningManager.swift */; };
+		2128ADD42A4C3ACA005D43B9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADD32A4C3ACA005D43B9 /* String+Extensions.swift */; };
+		2128ADD62A4C3B57005D43B9 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADD52A4C3B57005D43B9 /* Data+Extensions.swift */; };
+		2128ADD82A4C53CB005D43B9 /* DatabaseFrameRenderingTimeTableManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2128ADD72A4C53CB005D43B9 /* DatabaseFrameRenderingTimeTableManager.swift */; };
 		214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67902A1E01EF00BE704B /* AppDelegate.swift */; };
 		214B67932A1E01EF00BE704B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214B67922A1E01EF00BE704B /* ViewController.swift */; };
 		214B67952A1E01F000BE704B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 214B67942A1E01F000BE704B /* Assets.xcassets */; };
@@ -58,6 +61,9 @@
 		2128ADCD2A49A259005D43B9 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		2128ADCF2A4A8D1D005D43B9 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 		2128ADD12A4AC6BF005D43B9 /* RunningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningManager.swift; sourceTree = "<group>"; };
+		2128ADD32A4C3ACA005D43B9 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		2128ADD52A4C3B57005D43B9 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		2128ADD72A4C53CB005D43B9 /* DatabaseFrameRenderingTimeTableManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFrameRenderingTimeTableManager.swift; sourceTree = "<group>"; };
 		214B678D2A1E01EF00BE704B /* Probe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Probe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		214B67902A1E01EF00BE704B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		214B67922A1E01EF00BE704B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +111,7 @@
 				2128ADA02A41ACB0005D43B9 /* DatabaseCaseTableManager.swift */,
 				2128ADC22A430203005D43B9 /* DataBaseManager.swift */,
 				216D0AC12A25E48E00BDA2BF /* DatabaseTemplateTableManager.swift */,
+				2128ADD72A4C53CB005D43B9 /* DatabaseFrameRenderingTimeTableManager.swift */,
 				2128ADA72A42A31C005D43B9 /* SQLiteDatabaseWrapper.swift */,
 			);
 			path = SQLite;
@@ -170,6 +177,8 @@
 				2128ADA42A41B210005D43B9 /* SQLite */,
 				2128ADB12A42CD22005D43B9 /* Template */,
 				2128ADCA2A499B21005D43B9 /* ViewController */,
+				2128ADD32A4C3ACA005D43B9 /* String+Extensions.swift */,
+				2128ADD52A4C3B57005D43B9 /* Data+Extensions.swift */,
 			);
 			path = Probe;
 			sourceTree = "<group>";
@@ -286,7 +295,10 @@
 				216D0AE92A28785700BDA2BF /* LaunchManager.swift in Sources */,
 				214B67912A1E01EF00BE704B /* AppDelegate.swift in Sources */,
 				2128ADAF2A42CBC2005D43B9 /* NewCaseWindowController.swift in Sources */,
+				2128ADD42A4C3ACA005D43B9 /* String+Extensions.swift in Sources */,
 				2128ADD22A4AC6BF005D43B9 /* RunningManager.swift in Sources */,
+				2128ADD62A4C3B57005D43B9 /* Data+Extensions.swift in Sources */,
+				2128ADD82A4C53CB005D43B9 /* DatabaseFrameRenderingTimeTableManager.swift in Sources */,
 				216D0B252A299C5000BDA2BF /* ExportManager.swift in Sources */,
 				2128ADC52A494288005D43B9 /* HeaderViewController.swift in Sources */,
 			);

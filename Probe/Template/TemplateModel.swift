@@ -76,6 +76,8 @@ class TemplateModel: NSObject {
         }
     }
     
+    var frameRenderingTime = [Int64: Int64]()
+    
     init(id: String) {
         self.id = id
     }
@@ -83,7 +85,7 @@ class TemplateModel: NSObject {
     let space = "$"
     
     override var description: String {
-        return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(useMontageFlag ?? "-")\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")"
+        return "\(id)\(space)\(name)\(space)\(state)\(space)\(useMontage)\(space)\(useMontageFlag ?? "-")\(space)\(startMemory)\(space)\(endMemory)\(space)\(maxMemory)\(space)\(duration)\(space)\(errorMsg ?? "-")\(space)\(filePath ?? "-")\(space)\(frameRenderingTime)"
     }
 }
 

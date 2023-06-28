@@ -14,7 +14,9 @@ class DatabaseTemplateTableManager: NSObject {
         databaseWrapper.database
     }
     
+    private let caseId: Int64
     private let tableName: String
+    private var frameRenderingTimeTableManagers = [String : DatabaseFrameRenderingTimeTableManager]()
     
     private let idColomnName = "id"
     private let nameColomnName = "name"
@@ -28,16 +30,13 @@ class DatabaseTemplateTableManager: NSObject {
     private let errorColomnName = "error_msg"
     private let filePathColomnName = "file_path"
     
-    
-    init(database: SQLiteDatabaseWrapper, tableName: String) {
+    init(database: SQLiteDatabaseWrapper, caseId: Int64) {
         self.databaseWrapper = database
-        self.tableName = tableName
+        self.caseId = caseId
+        self.tableName = "templates_\(caseId)"
     }
     
-    func createTable(_ templateModels: [TemplateModel]) {
-        dropTable()
-        
-        
+    private func createTable() {
         let createTableSQL = """
         CREATE TABLE IF NOT EXISTS \(tableName) (
             \(idColomnName) INTEGER PRIMARY KEY,
@@ -67,6 +66,12 @@ class DatabaseTemplateTableManager: NSObject {
         }
 
         sqlite3_finalize(createTableStatement)
+    }
+
+    func createTable(_ templateModels: [TemplateModel]) {
+        dropTable()
+        
+        createTable()
         
         for templateModel in templateModels {
             insert(templateModel)
@@ -81,7 +86,7 @@ class DatabaseTemplateTableManager: NSObject {
         }
     }
     
-    func insert(_ templateModel: TemplateModel) {
+    func insert(_ model: TemplateModel) {
         let insertSQL = """
         INSERT INTO \(tableName)
         (\(idColomnName),
@@ -102,27 +107,27 @@ class DatabaseTemplateTableManager: NSObject {
 
         if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
             var index: Int32 = 1
-            sqlite3_bind_int64(insertStatement, index, sqlite3_int64((templateModel.id as NSString).integerValue))
+            sqlite3_bind_int64(insertStatement, index, sqlite3_int64((model.id as NSString).integerValue))
             index += 1
-            sqlite3_bind_text(insertStatement, index, (templateModel.name as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, index, (model.name as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(templateModel.state.rawValue))
+            sqlite3_bind_int(insertStatement, index, Int32(model.state.rawValue))
             index += 1
-            sqlite3_bind_int(insertStatement, index, templateModel.useMontage ? 1 : 0)
+            sqlite3_bind_int(insertStatement, index, model.useMontage ? 1 : 0)
             index += 1
-            sqlite3_bind_text(insertStatement, index, ((templateModel.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, index, ((model.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(templateModel.startMemory))
+            sqlite3_bind_int(insertStatement, index, Int32(model.startMemory))
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(templateModel.endMemory))
+            sqlite3_bind_int(insertStatement, index, Int32(model.endMemory))
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(templateModel.maxMemory))
+            sqlite3_bind_int(insertStatement, index, Int32(model.maxMemory))
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(templateModel.duration))
+            sqlite3_bind_int(insertStatement, index, Int32(model.duration))
             index += 1
-            sqlite3_bind_text(insertStatement, index, ((templateModel.errorMsg ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, index, ((model.errorMsg ?? "") as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_text(insertStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, index, ((model.filePath ?? "") as NSString).utf8String, -1, nil)
 
             if sqlite3_step(insertStatement) == SQLITE_DONE {
                 print("Successfully inserted row.")
@@ -134,6 +139,11 @@ class DatabaseTemplateTableManager: NSObject {
         }
 
         sqlite3_finalize(insertStatement)
+        
+        if !model.frameRenderingTime.isEmpty {
+            let manager = getFrameRenderingTimeTableManager(model.id)
+            manager.createTable(model.frameRenderingTime)
+        }
     }
     
     func delete(_ model: TemplateModel) {
@@ -153,9 +163,12 @@ class DatabaseTemplateTableManager: NSObject {
         }
 
         sqlite3_finalize(deleteStatement)
+        
+        let manager = getFrameRenderingTimeTableManager(model.id)
+        manager.dropTable()
     }
     
-    func update(_ templateModel: TemplateModel) {
+    func update(_ model: TemplateModel) {
         let updateSQL = """
         UPDATE \(tableName) SET
         \(nameColomnName) = ?,
@@ -174,27 +187,27 @@ class DatabaseTemplateTableManager: NSObject {
 
         if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
             var index: Int32 = 1
-            sqlite3_bind_text(updateStatement, index, (templateModel.name as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(updateStatement, index, (model.name as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(templateModel.state.rawValue))
+            sqlite3_bind_int(updateStatement, index, Int32(model.state.rawValue))
             index += 1
-            sqlite3_bind_int(updateStatement, index, templateModel.useMontage ? 1 : 0)
+            sqlite3_bind_int(updateStatement, index, model.useMontage ? 1 : 0)
             index += 1
-            sqlite3_bind_text(updateStatement, index, ((templateModel.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(updateStatement, index, ((model.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(templateModel.startMemory))
+            sqlite3_bind_int(updateStatement, index, Int32(model.startMemory))
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(templateModel.endMemory))
+            sqlite3_bind_int(updateStatement, index, Int32(model.endMemory))
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(templateModel.maxMemory))
+            sqlite3_bind_int(updateStatement, index, Int32(model.maxMemory))
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(templateModel.duration))
+            sqlite3_bind_int(updateStatement, index, Int32(model.duration))
             index += 1
-            sqlite3_bind_text(updateStatement, index, ((templateModel.errorMsg ?? "") as NSString).utf8String , -1, nil)
+            sqlite3_bind_text(updateStatement, index, ((model.errorMsg ?? "") as NSString).utf8String , -1, nil)
             index += 1
-            sqlite3_bind_text(updateStatement, index, ((templateModel.filePath ?? "") as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(updateStatement, index, ((model.filePath ?? "") as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int64(updateStatement, index, sqlite3_int64((templateModel.id as NSString).integerValue))
+            sqlite3_bind_int64(updateStatement, index, sqlite3_int64((model.id as NSString).integerValue))
 
             if sqlite3_step(updateStatement) == SQLITE_DONE {
                 print("Successfully updated row.")
@@ -206,6 +219,13 @@ class DatabaseTemplateTableManager: NSObject {
         }
 
         sqlite3_finalize(updateStatement)
+        
+        
+        let manager = getFrameRenderingTimeTableManager(model.id)
+        manager.dropTable()
+        if !model.frameRenderingTime.isEmpty {
+            manager.createTable(model.frameRenderingTime)
+        }
     }
     
     func select() -> [TemplateModel] {
@@ -243,6 +263,8 @@ class DatabaseTemplateTableManager: NSObject {
                 let filePath = String(cString: sqlite3_column_text(selectStatement, index))
                 templateModel.filePath = filePath
                 
+                templateModel.frameRenderingTime = getFrameRenderingTimeTableManager(templateModel.id).select()
+                
                 templateModels.append(templateModel)
             }
         } else {
@@ -252,5 +274,15 @@ class DatabaseTemplateTableManager: NSObject {
         sqlite3_finalize(selectStatement)
         
         return templateModels
+    }
+    
+    private func getFrameRenderingTimeTableManager(_ id: String) -> DatabaseFrameRenderingTimeTableManager {
+        if let manager = frameRenderingTimeTableManagers[id] {
+            return manager
+        } else {
+            let manager = DatabaseFrameRenderingTimeTableManager(database: databaseWrapper, caseId: self.caseId, templateId: id)
+            frameRenderingTimeTableManagers[id] = manager
+            return manager
+        }
     }
 }

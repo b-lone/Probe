@@ -95,6 +95,20 @@ class RunningManager: NSObject, SocketManagerDelegate, LaunchManagerDelegate {
         }
     }
     
+    func onFrameRenderingTime(_ message: [String : String]) {
+        if let id = message["id"],
+           let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
+            if let frameRenderingTime = message["frameRenderingTime"]?.toJsonObject(){
+                templateModel.frameRenderingTime.removeAll()
+                for (key, value) in frameRenderingTime {
+                    templateModel.frameRenderingTime[(key as NSString).longLongValue] = (value as NSString).longLongValue
+                }
+            }
+            
+            caseManager.update(templateModel, needSave: true)
+        }
+    }
+    
     func onFinish(_ message: [String : String]) {
         if let id = message["id"],
            let success = (message["success"] as? NSString)?.boolValue,

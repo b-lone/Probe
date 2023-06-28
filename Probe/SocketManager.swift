@@ -15,6 +15,7 @@ enum MessageType: String {
     case inProgress = "inProgress"
     case update = "update"
     case useMontage = "useMontage"
+    case frameRenderingTime = "frameRenderingTime"
     case finish = "finish"
     case end = "end"
 }
@@ -24,6 +25,7 @@ protocol SocketManagerDelegate: AnyObject {
     func onInProgress(_ message: [String: String])
     func onUpdate(_ message: [String: String])
     func onUseMontage(_ message: [String: String])
+    func onFrameRenderingTime(_ message: [String: String])
     func onFinish(_ message: [String: String])
     func onDisconnect()
 }
@@ -114,38 +116,11 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     private func write(_ jsonObject: [String: String], tag: Int) {
-        if let jsonString = convertToJsonString(jsonObject: jsonObject) {
+        if let jsonString = String(jsonObject: jsonObject) {
             print(jsonString)
             let message = jsonString + "end_youkun_fengexian"
             clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: tag)
         }
-    }
-// MARK: - json
-    private func convertToJsonData(jsonObject: Any) -> Data? {
-        if let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: []) {
-            return jsonData
-        }
-        return nil
-    }
-    
-    private func convertToJsonString(jsonObject: Any) -> String? {
-        if let jsonData = convertToJsonData(jsonObject: jsonObject) {
-            if let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue) as String? {
-                return jsonString
-            }
-        }
-        return nil
-    }
-    
-    private func convertToJsonObject(jsonData: Data) -> [String: String]? {
-        try? JSONSerialization.jsonObject(with: jsonData) as? [String: String]
-    }
-    
-    private func convertToJsonObject(jsonString: String) -> [String: String]? {
-        if let jsonData = jsonString.data(using: .utf8) {
-            return try? JSONSerialization.jsonObject(with: jsonData) as? [String: String]
-        }
-        return nil
     }
 // MARK: - timer
     private func scheduleHeartbeat() {
@@ -178,7 +153,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
 // MARK: - read
     private func parseData(data: String) {
         print("Received message from server: \(data)")
-        guard let message = convertToJsonObject(jsonString: data), let typeString = message["type"] else { return }
+        guard let message = data.toJsonObject(), let typeString = message["type"] else { return }
         
         let type = MessageType(rawValue: typeString) ?? .invalid
         switch type {
@@ -190,6 +165,8 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             onUpdate(message)
         case .useMontage:
             onUseMontage(message)
+        case .frameRenderingTime:
+            onFrameRenderingTime(message)
         case .finish:
             onFinish(message)
         default:
@@ -224,6 +201,10 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     
     private func onUseMontage(_ message: [String: String]) {
         delegate?.onUseMontage(message)
+    }
+    
+    private func onFrameRenderingTime(_ message: [String: String]) {
+        delegate?.onFrameRenderingTime(message)
     }
     
     private func onFinish(_ message: [String: String]) {

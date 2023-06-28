@@ -56,7 +56,7 @@ class DataBaseManager: NSObject {
         if let templateTableManager = templateTableManagers[id] {
             return templateTableManager
         } else {
-            let manager = DatabaseTemplateTableManager(database: databaseWrapper, tableName: "templates_\(id)")
+            let manager = DatabaseTemplateTableManager(database: databaseWrapper, caseId: id)
             templateTableManagers[id] = manager
             return manager
         }
