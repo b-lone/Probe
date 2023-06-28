@@ -10,8 +10,7 @@ import SnapKit
 
 class ControlViewController: BaseViewController {
     private var exportManager = ExportManager()
-    private let socketManager: SocketManager
-    private let launchManager: LaunchManager
+    private var runningManager = RunningManager()
     
     private lazy var stackView: NSStackView = {
         let view = NSStackView()
@@ -23,19 +22,6 @@ class ControlViewController: BaseViewController {
     }()
     
     private var newCaseWindowController: NewCaseWindowController?
-    private let sendStartMessage: ()->Void
-    
-    init(socketManager: SocketManager, launchManager: LaunchManager, sendStartMessage: @escaping ()->Void) {
-        self.socketManager = socketManager
-        self.launchManager = launchManager
-        self.sendStartMessage = sendStartMessage
-        
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func loadView() {
         view = NSView()
@@ -48,9 +34,9 @@ class ControlViewController: BaseViewController {
         let buttonInfos = [
             ("Import", #selector(onImport(_:))),
             ("Start", #selector(onStart(_:))),
+            ("Stop", #selector(onStop(_:))),
             ("Export", #selector(onExport(_:))),
             ("Export Failed IDs", #selector(onExportFailedIds(_:))),
-            ("End", #selector(onEnd(_:))),
             ("Reset", #selector(onReset(_:))),
             ("Delete", #selector(onDelete(_:))),
         ]
@@ -84,8 +70,14 @@ class ControlViewController: BaseViewController {
     
     @objc
     private func onStart(_ sender: Any) {
-        socketManager.connectToServer()
-        sendStartMessage()
+        guard let currentTestCase = caseManager.currentTestCase else { return }
+        runningManager.start(currentTestCase)
+    }
+    
+    @objc
+    private func onStop(_ sender: Any) {
+        guard let currentTestCase = caseManager.currentTestCase else { return }
+        runningManager.start(currentTestCase)
     }
     
     @objc
@@ -100,11 +92,6 @@ class ControlViewController: BaseViewController {
         if let templateModels = caseManager.currentTestCase?.templateModels {
             exportManager.exportFailedIds(templateModels)
         }
-    }
-    
-    @objc
-    private func onEnd(_ sender: Any) {
-        launchManager.sendEndMessage()
     }
     
     @objc

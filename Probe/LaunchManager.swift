@@ -18,6 +18,11 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     private var date: Date?
     weak var delegate: LaunchManagerDelegate?
     
+    func sendConfigMessage(_ testCase: TestCaseModel) {
+        let message = "{config:\(LocalFileManager.shared.getVideoOutputPath(testCase))}"
+        write(message)
+    }
+    
     func sendLaunchMessage() {
         guard !checkOverrun() else { return }
         
@@ -66,6 +71,28 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
         } catch {
             print("Error connecting to server: \(error)")
         }
+    }
+    
+    private func extractCommandAndParameter(from input: String) -> (command: String?, parameter: String?) {
+        let pattern = #"\{([^:}]+)(?::([^}]+))?\}"#
+        
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: input, range: NSRange(input.startIndex..., in: input)) else {
+            return (nil, nil)
+        }
+        
+        if let commandRange = Range(match.range(at: 1), in: input) {
+            let command = String(input[commandRange])
+            
+            if let parameterRange = Range(match.range(at: 2), in: input) {
+                let parameter = String(input[parameterRange])
+                return (command, parameter)
+            } else {
+                return (command, nil)
+            }
+        }
+        
+        return (nil, nil)
     }
     
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
@@ -118,27 +145,5 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     
     func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
         print("launch didWriteDataWithTag:\(tag)")
-    }
-    
-    private func extractCommandAndParameter(from input: String) -> (command: String?, parameter: String?) {
-        let pattern = #"\{([^:}]+)(?::([^}]+))?\}"#
-        
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: input, range: NSRange(input.startIndex..., in: input)) else {
-            return (nil, nil)
-        }
-        
-        if let commandRange = Range(match.range(at: 1), in: input) {
-            let command = String(input[commandRange])
-            
-            if let parameterRange = Range(match.range(at: 2), in: input) {
-                let parameter = String(input[parameterRange])
-                return (command, parameter)
-            } else {
-                return (command, nil)
-            }
-        }
-        
-        return (nil, nil)
     }
 }

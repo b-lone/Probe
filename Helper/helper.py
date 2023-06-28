@@ -15,6 +15,8 @@ server_socket.listen(1)
 
 print("服务器已启动，等待客户端连接...")
 
+download_path = "."
+
 def launch():
     print("launch")
     shell_command = "ios-deploy --justlaunch --noinstall --debug --bundle /Users/archie/Library/Developer/Xcode/DerivedData/bili-studio-bxzifbpjhtyddjhbhghkzowlryfb/Build/Products/Debug-iphoneos/bazel-out/applebin_ios-ios_arm64-dbg-ST-3a8ae290c50a/bin/bilistudio-universal/bili-studio.app"
@@ -25,7 +27,8 @@ def launch():
 
 def download(path):
     print("download")
-    shell_command = f"ios-deploy --download={path} --bundle_id 'com.bilibili.studio' --to ."
+    shell_command = f"ios-deploy --download=\"{path}\" --bundle_id 'com.bilibili.studio' --to \"{download_path}\""
+    print(shell_command)
     process = subprocess.Popen(shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()  
     output = (stdout + stderr).decode("utf-8")
@@ -34,6 +37,10 @@ def download(path):
 flag = True
 def onCommand(command, para_list):
     response = ''
+    if command == "config":
+        global download_path
+        download_path = para_list[0]
+        response = '{config fininsh}'
     if command == "launch":
         launch()
         response = '{launch fininsh}'
@@ -66,7 +73,6 @@ while flag:
             start_index = buffer.index("{")
             end_index = buffer.index("}")
             message = buffer[start_index:end_index + 1]
-            print(message)
             buffer = buffer[end_index + 1:]
             pattern = r"{(\w+)(?::([^}]*))?}"
             matches = re.search(pattern, message)

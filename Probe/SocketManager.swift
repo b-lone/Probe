@@ -55,6 +55,7 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     
     deinit {
         heartbeatTimer?.invalidate()
+        reconnectTimer?.invalidate()
     }
     
     func connectToServer() {
@@ -65,6 +66,11 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         } catch {
             print("Error connecting to server: \(error)")
         }
+    }
+    
+    func disconnectToServer() {
+        invalidateHeartbeat()
+        invalidateReconnectTimer()
     }
 // MARK: - write
     func sendStartMessage(_ templateModels: [TemplateModel]) {
