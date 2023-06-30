@@ -8,281 +8,197 @@
 import Cocoa
 import SQLite3
 
-class DatabaseTemplateTableManager: NSObject {
-    private var databaseWrapper: SQLiteDatabaseWrapper
-    private var database: OpaquePointer? {
-        databaseWrapper.database
-    }
-    
-    private let caseId: Int64
-    private let tableName: String
-    private var frameRenderingTimeTableManagers = [String : DatabaseFrameRenderingTimeTableManager]()
-    
-    private let idColomnName = "id"
+class DatabaseTemplateTableManager: BaseDatabaseTableManager<TemplateModel> {
     private let nameColomnName = "name"
-    private let stateColomnName = "state"
-    private let useMontageColomnName = "use_montage"
-    private let useMontageFlagColomnName = "use_montage_flag"
-    private let startMemoryColomnName = "start_memory"
-    private let endMemoryColomnName = "end_memory"
-    private let maxMemoryColomnName = "max_memory"
-    private let durationColomnName = "duration"
-    private let errorColomnName = "error_msg"
-    private let filePathColomnName = "file_path"
+    private let sdkTagColomnName = "sdk_tag"
+    private let caseIdsColomnName = "case_ids"
+    private let usageColomnName = "usage"
+    private let clipCountColomnName = "clip_count"
+    private let canReplaceClipCountColomnName = "can_replace_clip_count"
+    private let previewUrlColomnName = "preview_url"
+    private let coverUrlColomnName = "cover_url"
+    private let downloadUrlColomnName = "download_url"
     
-    init(database: SQLiteDatabaseWrapper, caseId: Int64) {
-        self.databaseWrapper = database
-        self.caseId = caseId
-        self.tableName = "templates_\(caseId)"
+    init() {
+        super.init(tableName: "templates")
     }
     
-    private func createTable() {
-        let createTableSQL = """
-        CREATE TABLE IF NOT EXISTS \(tableName) (
-            \(idColomnName) INTEGER PRIMARY KEY,
-            \(nameColomnName) TEXT,
-            \(stateColomnName) INTEGER,
-            \(useMontageColomnName) INTEGER,
-            \(useMontageFlagColomnName) TEXT,
-            \(startMemoryColomnName) INTEGER,
-            \(endMemoryColomnName) INTEGER,
-            \(maxMemoryColomnName) INTEGER,
-            \(durationColomnName) INTEGER,
-            \(errorColomnName) TEXT,
-            \(filePathColomnName) TEXT
+    override var createTableSQL: String {
+        """
+        CREATE TABLE IF NOT EXISTS \(tableName)
+        (
+        \(idColomnName) INTEGER PRIMARY KEY,
+        \(nameColomnName) TEXT,
+        \(sdkTagColomnName) INTEGER,
+        \(caseIdsColomnName) TEXT,
+        \(usageColomnName) INTEGER,
+        \(clipCountColomnName) INTEGER,
+        \(canReplaceClipCountColomnName) INTEGER,
+        \(previewUrlColomnName) TEXT,
+        \(coverUrlColomnName) TEXT,
+        \(downloadUrlColomnName) TEXT
         )
         """
-
-        var createTableStatement: OpaquePointer?
-
-        if sqlite3_prepare_v2(database, createTableSQL, -1, &createTableStatement, nil) == SQLITE_OK {
-            if sqlite3_step(createTableStatement) == SQLITE_DONE {
-                print("Table created successfully")
-            } else {
-                print("Failed to create table")
-            }
-        } else {
-            print("Failed to prepare create table statement")
-        }
-
-        sqlite3_finalize(createTableStatement)
-    }
-
-    func createTable(_ templateModels: [TemplateModel]) {
-        dropTable()
-        
-        createTable()
-        
-        for templateModel in templateModels {
-            insert(templateModel)
-        }
     }
     
-    func dropTable() {
-        let dropTableQuery = "DROP TABLE IF EXISTS \(tableName)"
-        if sqlite3_exec(database, dropTableQuery, nil, nil, nil) != SQLITE_OK {
-            let errorMessage = String(cString: sqlite3_errmsg(database))
-            print("error dropping table: \(errorMessage)")
+    override func createTableIfNotExits() {
+        super.createTableIfNotExits()
+        if !checkColumnExists(columnName: usageColomnName) {
+            addColumn(usageColomnName, "INTEGER")
+            addColumn(clipCountColomnName, "INTEGER")
+            addColumn(canReplaceClipCountColomnName, "INTEGER")
+            addColumn(previewUrlColomnName, "TEXT")
+            addColumn(coverUrlColomnName, "TEXT")
+            addColumn(downloadUrlColomnName, "TEXT")
         }
     }
-    
-    func insert(_ model: TemplateModel) {
-        let insertSQL = """
-        INSERT INTO \(tableName)
-        (\(idColomnName),
-        \(nameColomnName),
-        \(stateColomnName),
-        \(useMontageColomnName),
-        \(useMontageFlagColomnName),
-        \(startMemoryColomnName),
-        \(endMemoryColomnName),
-        \(maxMemoryColomnName),
-        \(durationColomnName),
-        \(errorColomnName),
-        \(filePathColomnName))
-        VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+    override var insertSQL: String {
         """
-        var insertStatement: OpaquePointer?
-
-        if sqlite3_prepare_v2(database, insertSQL, -1, &insertStatement, nil) == SQLITE_OK {
+        INSERT OR REPLACE INTO \(tableName)
+        (
+        \(idColomnName),
+        \(nameColomnName),
+        \(sdkTagColomnName),
+        \(caseIdsColomnName),
+        \(usageColomnName),
+        \(clipCountColomnName),
+        \(canReplaceClipCountColomnName),
+        \(previewUrlColomnName),
+        \(coverUrlColomnName),
+        \(downloadUrlColomnName)
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+    }
+    
+    override var insertPrepare: ((OpaquePointer?, TemplateModel) -> Void) {
+        { statement, model in
             var index: Int32 = 1
-            sqlite3_bind_int64(insertStatement, index, sqlite3_int64((model.id as NSString).integerValue))
+            sqlite3_bind_int64(statement, index, model.id)
             index += 1
-            sqlite3_bind_text(insertStatement, index, (model.name as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, index, (model.name as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(model.state.rawValue))
+            sqlite3_bind_int64(statement, index, model.sdkTag ? 1 : 0)
             index += 1
-            sqlite3_bind_int(insertStatement, index, model.useMontage ? 1 : 0)
-            index += 1
-            sqlite3_bind_text(insertStatement, index, ((model.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
-            index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(model.startMemory))
-            index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(model.endMemory))
-            index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(model.maxMemory))
-            index += 1
-            sqlite3_bind_int(insertStatement, index, Int32(model.duration))
-            index += 1
-            sqlite3_bind_text(insertStatement, index, ((model.errorMsg ?? "") as NSString).utf8String, -1, nil)
-            index += 1
-            sqlite3_bind_text(insertStatement, index, ((model.filePath ?? "") as NSString).utf8String, -1, nil)
-
-            if sqlite3_step(insertStatement) == SQLITE_DONE {
-                print("Successfully inserted row.")
-            } else {
-                print("Failed to insert row.")
+            var caseIds = ""
+            if let jsonData = try? JSONEncoder().encode(model.caseIds),  let jsonString = String(data: jsonData, encoding: .utf8) {
+                caseIds = jsonString
             }
-        } else {
-            print("Failed to prepare insert statement.")
-        }
-
-        sqlite3_finalize(insertStatement)
-        
-        if !model.frameRenderingTime.isEmpty {
-            let manager = getFrameRenderingTimeTableManager(model.id)
-            manager.createTable(model.frameRenderingTime)
+            sqlite3_bind_text(statement, index, (caseIds as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.usage)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.clipCount)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.canReplaceClipCount)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.previewUrl as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.coverUrl as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.downloadUrl as NSString).utf8String, -1, nil)
         }
     }
     
-    func delete(_ model: TemplateModel) {
-        let deleteSQL = "DELETE FROM \(tableName) WHERE \(idColomnName) = ?"
-        var deleteStatement: OpaquePointer?
-
-        if sqlite3_prepare_v2(database, deleteSQL, -1, &deleteStatement, nil) == SQLITE_OK {
-            sqlite3_bind_int64(deleteStatement, 1, sqlite3_int64((model.id as NSString).integerValue))
-
-            if sqlite3_step(deleteStatement) == SQLITE_DONE {
-                print("Successfully deleted row.")
-            } else {
-                print("Failed to delete row.")
-            }
-        } else {
-            print("Failed to prepare delete statement.")
-        }
-
-        sqlite3_finalize(deleteStatement)
-        
-        let manager = getFrameRenderingTimeTableManager(model.id)
-        manager.dropTable()
-    }
-    
-    func update(_ model: TemplateModel) {
-        let updateSQL = """
-        UPDATE \(tableName) SET
-        \(nameColomnName) = ?,
-        \(stateColomnName) = ?,
-        \(useMontageColomnName) = ?,
-        \(useMontageFlagColomnName) = ?,
-        \(startMemoryColomnName) = ?,
-        \(endMemoryColomnName) = ?,
-        \(maxMemoryColomnName) = ?,
-        \(durationColomnName) = ?,
-        \(errorColomnName) = ?,
-        \(filePathColomnName) = ?
+    override var updateSQL: String {
+        """
+        UPDATE \(tableName)
+        SET \(nameColomnName) = ?,
+        \(sdkTagColomnName) = ?,
+        \(caseIdsColomnName) = ?,
+        \(usageColomnName) = ?,
+        \(clipCountColomnName) = ?,
+        \(canReplaceClipCountColomnName) = ?,
+        \(previewUrlColomnName) = ?,
+        \(coverUrlColomnName) = ?,
+        \(downloadUrlColomnName) = ?
         WHERE \(idColomnName) = ?
         """
-        var updateStatement: OpaquePointer?
-
-        if sqlite3_prepare_v2(database, updateSQL, -1, &updateStatement, nil) == SQLITE_OK {
+    }
+    
+    override var updatePrepare: ((OpaquePointer?, TemplateModel) -> Void) {
+        { statement, model in
             var index: Int32 = 1
-            sqlite3_bind_text(updateStatement, index, (model.name as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, index, (model.name as NSString).utf8String, -1, nil)
             index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(model.state.rawValue))
+            sqlite3_bind_int64(statement, index, model.sdkTag ? 1 : 0)
             index += 1
-            sqlite3_bind_int(updateStatement, index, model.useMontage ? 1 : 0)
-            index += 1
-            sqlite3_bind_text(updateStatement, index, ((model.useMontageFlag ?? "") as NSString).utf8String, -1, nil)
-            index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(model.startMemory))
-            index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(model.endMemory))
-            index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(model.maxMemory))
-            index += 1
-            sqlite3_bind_int(updateStatement, index, Int32(model.duration))
-            index += 1
-            sqlite3_bind_text(updateStatement, index, ((model.errorMsg ?? "") as NSString).utf8String , -1, nil)
-            index += 1
-            sqlite3_bind_text(updateStatement, index, ((model.filePath ?? "") as NSString).utf8String, -1, nil)
-            index += 1
-            sqlite3_bind_int64(updateStatement, index, sqlite3_int64((model.id as NSString).integerValue))
-
-            if sqlite3_step(updateStatement) == SQLITE_DONE {
-                print("Successfully updated row.")
-            } else {
-                print("Failed to update row.")
+            var caseIds = ""
+            if let jsonData = try? JSONEncoder().encode(model.caseIds),  let jsonString = String(data: jsonData, encoding: .utf8) {
+                caseIds = jsonString
             }
-        } else {
-            print("Failed to prepare update statement.")
-        }
-
-        sqlite3_finalize(updateStatement)
-        
-        
-        let manager = getFrameRenderingTimeTableManager(model.id)
-        manager.dropTable()
-        if !model.frameRenderingTime.isEmpty {
-            manager.createTable(model.frameRenderingTime)
+            sqlite3_bind_text(statement, index, (caseIds as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.usage)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.clipCount)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.canReplaceClipCount)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.previewUrl as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.coverUrl as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_text(statement, index, (model.downloadUrl as NSString).utf8String, -1, nil)
+            index += 1
+            sqlite3_bind_int64(statement, index, model.id)
         }
     }
     
-    func select() -> [TemplateModel] {
-        let selectSQL = "SELECT * FROM \(tableName) ORDER BY \(idColomnName)"
-        var selectStatement: OpaquePointer?
-
-        var templateModels = [TemplateModel]()
-        if sqlite3_prepare_v2(database, selectSQL, -1, &selectStatement, nil) == SQLITE_OK {
-            while sqlite3_step(selectStatement) == SQLITE_ROW {
-                var index: Int32 = 0
-                let id = sqlite3_column_int64(selectStatement, index)
-                let templateModel = TemplateModel(id: "\(id)")
-                index += 1
-                let name = String(cString: sqlite3_column_text(selectStatement, index))
-                templateModel.name = name
-                index += 1
-                templateModel.state = TemplateModel.State(rawValue: Int(sqlite3_column_int(selectStatement, index))) ?? .ready
-                index += 1
-                templateModel.useMontage = sqlite3_column_int64(selectStatement, index) == 1
-                index += 1
-                let useMontageFlag = String(cString: sqlite3_column_text(selectStatement, index))
-                templateModel.useMontageFlag = useMontageFlag
-                index += 1
-                templateModel.startMemory = Int(sqlite3_column_int(selectStatement, index))
-                index += 1
-                templateModel.endMemory = Int(sqlite3_column_int(selectStatement, index))
-                index += 1
-                templateModel.maxMemory = Int(sqlite3_column_int(selectStatement, index))
-                index += 1
-                templateModel.duration = Int(sqlite3_column_int(selectStatement, index))
-                index += 1
-                let error = String(cString: sqlite3_column_text(selectStatement, index))
-                templateModel.errorMsg = error
-                index += 1
-                let filePath = String(cString: sqlite3_column_text(selectStatement, index))
-                templateModel.filePath = filePath
-                
-                templateModel.frameRenderingTime = getFrameRenderingTimeTableManager(templateModel.id).select()
-                
-                templateModels.append(templateModel)
+    override var selectPrepare: ((OpaquePointer?) -> TemplateModel) {
+        { statement in
+            var index: Int32 = 0
+            let id = sqlite3_column_int64(statement, index)
+            index += 1
+            let name = String(cString: sqlite3_column_text(statement, index))
+            index += 1
+            let sdkTag = sqlite3_column_int64(statement, index) == 1
+            index += 1
+            let jsonString = String(cString: sqlite3_column_text(statement, index))
+            var caseIds = [Int64]()
+            if let jsonData = jsonString.data(using: .utf8) {
+                do {
+                    caseIds = try JSONDecoder().decode([Int64].self, from: jsonData)
+                } catch {
+                    print("Error decoding JSON to array: \(error)")
+                }
             }
-        } else {
-            print("Failed to prepare select statement.")
-        }
-
-        sqlite3_finalize(selectStatement)
-        
-        return templateModels
-    }
-    
-    private func getFrameRenderingTimeTableManager(_ id: String) -> DatabaseFrameRenderingTimeTableManager {
-        if let manager = frameRenderingTimeTableManagers[id] {
-            return manager
-        } else {
-            let manager = DatabaseFrameRenderingTimeTableManager(database: databaseWrapper, caseId: self.caseId, templateId: id)
-            frameRenderingTimeTableManagers[id] = manager
-            return manager
+            index += 1
+            let usage = sqlite3_column_int64(statement, index)
+            index += 1
+            let clipCount = sqlite3_column_int64(statement, index)
+            index += 1
+            let canReplaceClipCount = sqlite3_column_int64(statement, index)
+            index += 1
+            var previewUrl = ""
+            if let cString = sqlite3_column_text(statement, index) {
+                previewUrl = String(cString: cString)
+            }
+            index += 1
+            var coverUrl = ""
+            if let cString = sqlite3_column_text(statement, index) {
+                coverUrl = String(cString: cString)
+            }
+            index += 1
+            var downloadUrl = ""
+            if let cString = sqlite3_column_text(statement, index) {
+                downloadUrl = String(cString: cString)
+            }
+            
+            
+            let model = TemplateModel(id: id,
+                                      name: name,
+                                      sdkTag: sdkTag,
+                                      usage: usage,
+                                      clipCount: clipCount,
+                                      canReplaceClipCount: canReplaceClipCount,
+                                      previewUrl: previewUrl,
+                                      coverUrl: coverUrl,
+                                      downloadUrl: downloadUrl,
+                                      caseIds: caseIds)
+            return model
         }
     }
 }

@@ -706,64 +706,9 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Probe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="3vI-n7-NfK">
-                                <rect key="frame" x="0.0" y="776" width="1200" height="24"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="24" id="PS2-WC-LYp"/>
-                                </constraints>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="lCT-vF-SaN">
-                                <rect key="frame" x="8" y="775" width="1184" height="1"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="DJB-bJ-lsc"/>
-                                </constraints>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="ZD5-ev-vcK">
-                                <rect key="frame" x="0.0" y="96" width="1200" height="679"/>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="AXi-H8-0U0">
-                                <rect key="frame" x="0.0" y="48" width="1200" height="48"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="Cr6-W0-EES"/>
-                                </constraints>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Pu0-CH-Q8d">
-                                <rect key="frame" x="0.0" y="0.0" width="1200" height="48"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="7M7-Mc-4Ny"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="zUM-ye-sFx"/>
-                                </constraints>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="Pu0-CH-Q8d" firstAttribute="top" secondItem="AXi-H8-0U0" secondAttribute="bottom" id="0Vn-Lf-1Ky"/>
-                            <constraint firstAttribute="bottom" secondItem="Pu0-CH-Q8d" secondAttribute="bottom" id="1Tt-8j-bSg"/>
-                            <constraint firstItem="3vI-n7-NfK" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="4AV-67-4Lq"/>
-                            <constraint firstItem="ZD5-ev-vcK" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Dev-Lq-cXE"/>
-                            <constraint firstItem="3vI-n7-NfK" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="EzR-So-nwZ"/>
-                            <constraint firstItem="AXi-H8-0U0" firstAttribute="top" secondItem="ZD5-ev-vcK" secondAttribute="bottom" id="KGx-a9-bNK"/>
-                            <constraint firstItem="ZD5-ev-vcK" firstAttribute="top" secondItem="lCT-vF-SaN" secondAttribute="bottom" id="N9r-uy-eYG"/>
-                            <constraint firstAttribute="trailing" secondItem="AXi-H8-0U0" secondAttribute="trailing" id="OwE-Pe-cJt"/>
-                            <constraint firstAttribute="trailing" secondItem="3vI-n7-NfK" secondAttribute="trailing" id="SbD-op-kNl"/>
-                            <constraint firstItem="lCT-vF-SaN" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="VfC-KW-O6E"/>
-                            <constraint firstAttribute="trailing" secondItem="Pu0-CH-Q8d" secondAttribute="trailing" id="ZOD-73-JXp"/>
-                            <constraint firstItem="lCT-vF-SaN" firstAttribute="top" secondItem="3vI-n7-NfK" secondAttribute="bottom" id="aGJ-wA-RMp"/>
-                            <constraint firstItem="AXi-H8-0U0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="atV-f8-U39"/>
-                            <constraint firstAttribute="trailing" secondItem="ZD5-ev-vcK" secondAttribute="trailing" id="bjV-mu-bhI"/>
-                            <constraint firstItem="Pu0-CH-Q8d" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="jgo-1i-4pe"/>
-                            <constraint firstAttribute="trailing" secondItem="lCT-vF-SaN" secondAttribute="trailing" constant="8" id="lmn-Tm-nqY"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="controlContainerView" destination="Pu0-CH-Q8d" id="qOw-HP-Ce5"/>
-                        <outlet property="headerContainerView" destination="3vI-n7-NfK" id="IwT-1Y-iJc"/>
-                        <outlet property="separator" destination="lCT-vF-SaN" id="Zf8-ib-75i"/>
-                        <outlet property="statisticsContainerView" destination="AXi-H8-0U0" id="hy0-2d-m6y"/>
-                        <outlet property="tableContainerView" destination="ZD5-ev-vcK" id="5Av-VC-ZEj"/>
-                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

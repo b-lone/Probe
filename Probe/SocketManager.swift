@@ -14,7 +14,7 @@ enum MessageType: String {
     case start = "start"
     case inProgress = "inProgress"
     case update = "update"
-    case useMontage = "useMontage"
+    case montageAbility = "montageAbility"
     case frameRenderingTime = "frameRenderingTime"
     case finish = "finish"
     case end = "end"
@@ -24,10 +24,11 @@ protocol SocketManagerDelegate: AnyObject {
     func onConnect()
     func onInProgress(_ message: [String: String])
     func onUpdate(_ message: [String: String])
-    func onUseMontage(_ message: [String: String])
+    func onMontageAbility(_ message: [String: String])
     func onFrameRenderingTime(_ message: [String: String])
     func onFinish(_ message: [String: String])
     func onDisconnect()
+    func onTimeout()
 }
 
 class SocketManager: NSObject, GCDAsyncSocketDelegate {
@@ -52,37 +53,39 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     private var reconnectTimer: Timer?
+    private var timeoutTimer: Timer?
     
     private var cacheString: String?
     
     deinit {
         heartbeatTimer?.invalidate()
         reconnectTimer?.invalidate()
+        timeoutTimer?.invalidate()
     }
     
     func connectToServer() {
         guard !clientSocket.isConnected else { return }
         do {
             try clientSocket.connect(toHost: "localhost", onPort: 10010)
-            print("Connected to server")
+            print("[Socket][iPhone]Connected to server")
         } catch {
-            print("Error connecting to server: \(error)")
+            print("[Socket][iPhone]Error connecting to server: \(error)")
         }
     }
     
     func disconnectToServer() {
         invalidateHeartbeat()
         invalidateReconnectTimer()
+        invalidateTimeoutTimer()
     }
 // MARK: - write
-    func sendStartMessage(_ templateModels: [TemplateModel]) {
+    func sendStartMessage(_ model: [TemplateModel]) {
         guard clientSocket.isConnected else { return }
         
-        var ids = templateModels.map { $0.id }
+        var ids = model.map { $0.id }
         guard !ids.isEmpty else { return }
         ids = [ ids[0] ]
         
-        // 分批发送
         let batchSize = 10
         var remainingIDs = ids
         while !remainingIDs.isEmpty {
@@ -90,19 +93,21 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             remainingIDs.removeFirst(min(batchSize, remainingIDs.count))
             sendStartMessageBatch(batch)
         }
+        
+        scheduleTimeoutTimer()
     }
 
-    func sendStartMessageBatch(_ ids: [String]) {
+    func sendStartMessageBatch(_ ids: [Int64]) {
         guard !ids.isEmpty else { return }
         
-        let idsString = ids.joined(separator: ",")
+        let idsString = ids.map({ "\($0)" }).joined(separator: ",")
         
         let startMessage = [
             "type": MessageType.start.rawValue,
             "ids": idsString
         ]
         
-        write(startMessage, tag: 2)
+        write(startMessage)
     }
     
     func sendEndMessage() {
@@ -112,14 +117,14 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             "type": MessageType.end.rawValue,
         ]
         
-        write(message, tag: 2)
+        write(message)
     }
     
-    private func write(_ jsonObject: [String: String], tag: Int) {
+    private func write(_ jsonObject: [String: String]) {
         if let jsonString = String(jsonObject: jsonObject) {
-            print(jsonString)
+            print("[Socket][iPhone]Write:\(jsonString)")
             let message = jsonString + "end_youkun_fengexian"
-            clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: tag)
+            clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: 0)
         }
     }
 // MARK: - timer
@@ -129,7 +134,8 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         
         weak var weakSelf = self
         heartbeatTimer = .scheduledTimer(withTimeInterval: 30, repeats: true, block: { _ in
-            weakSelf?.write([ "type" : MessageType.heartbeat.rawValue], tag: 1)
+            weakSelf?.write([ "type" : MessageType.heartbeat.rawValue])
+            weakSelf?.heartbeatCounter += 1
         })
     }
     
@@ -150,10 +156,28 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         reconnectTimer?.invalidate()
         reconnectTimer = nil
     }
+    
+    private func scheduleTimeoutTimer() {
+        invalidateTimeoutTimer()
+        weak var weakSelf = self
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: false, block: { _ in
+            weakSelf?.onTimeout()
+        })
+    }
+    
+    private func invalidateTimeoutTimer() {
+        timeoutTimer?.invalidate()
+        timeoutTimer = nil
+    }
+    
+    private func onTimeout() {
+        delegate?.onTimeout()
+    }
 // MARK: - read
     private func parseData(data: String) {
-        print("Received message from server: \(data)")
         guard let message = data.toJsonObject(), let typeString = message["type"] else { return }
+        
+        print("[Socket][iPhone]Read: \(message)")
         
         let type = MessageType(rawValue: typeString) ?? .invalid
         switch type {
@@ -163,8 +187,8 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
             onInProgress(message)
         case .update:
             onUpdate(message)
-        case .useMontage:
-            onUseMontage(message)
+        case .montageAbility:
+            onMontageAbility(message)
         case .frameRenderingTime:
             onFrameRenderingTime(message)
         case .finish:
@@ -199,8 +223,8 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
         delegate?.onUpdate(message)
     }
     
-    private func onUseMontage(_ message: [String: String]) {
-        delegate?.onUseMontage(message)
+    private func onMontageAbility(_ message: [String: String]) {
+        delegate?.onMontageAbility(message)
     }
     
     private func onFrameRenderingTime(_ message: [String: String]) {
@@ -208,21 +232,21 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     private func onFinish(_ message: [String: String]) {
+        invalidateTimeoutTimer()
         delegate?.onFinish(message)
     }
 // MARK: - GCDAsyncSocketDelegate
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        print("didConnectToHost")
+        print("[Socket][iPhone]Did Connect")
         onConnect()
     }
     
     func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        print("socketDidDisconnect:\(String(describing: err))")
+        print("[Socket][iPhone]Did Disconnect:\(String(describing: err))")
         onDisconnect()
     }
     
     func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-//        print("didRead:\(tag)")
         var jsonStrings = [String]()
 
         if var dataString = String(data: data, encoding: .utf8) {
@@ -253,9 +277,6 @@ class SocketManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
-        print("didWriteDataWithTag:\(tag)")
-        if tag == 1 {
-            heartbeatCounter += 1
-        }
+        print("[Socket][iPhone]Did Write")
     }
 }

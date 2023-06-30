@@ -41,7 +41,7 @@ def onCommand(command, para_list):
         global download_path
         download_path = para_list[0]
         response = '{config fininsh}'
-    if command == "launch":
+    elif command == "launch":
         launch()
         response = '{launch fininsh}'
     elif command == 'end':

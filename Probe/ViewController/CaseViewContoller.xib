@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="CaseViewContoller" customModule="Probe" customModuleProvider="target">
+            <connections>
+                <outlet property="controlContainerView" destination="X9c-Nr-u6J" id="BFO-D0-eU6"/>
+                <outlet property="headerContainerView" destination="37o-iq-Ih9" id="nLU-xY-iDL"/>
+                <outlet property="separator" destination="8If-4a-voF" id="itq-we-Hlr"/>
+                <outlet property="statisticsContainerView" destination="J2Z-Th-6dn" id="eGe-XB-MMl"/>
+                <outlet property="tableContainerView" destination="zpO-I9-6SM" id="qyM-ov-mSy"/>
+                <outlet property="view" destination="lQu-L0-920" id="EKa-67-hqJ"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="lQu-L0-920">
+            <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="37o-iq-Ih9">
+                    <rect key="frame" x="0.0" y="776" width="1200" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="24" id="FKO-xF-TQh"/>
+                    </constraints>
+                </customView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="8If-4a-voF">
+                    <rect key="frame" x="8" y="775" width="1184" height="1"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="iqg-Pa-dNR"/>
+                    </constraints>
+                </customView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="zpO-I9-6SM">
+                    <rect key="frame" x="0.0" y="96" width="1200" height="679"/>
+                </customView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="J2Z-Th-6dn">
+                    <rect key="frame" x="0.0" y="48" width="1200" height="48"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="ymY-MX-sNJ"/>
+                    </constraints>
+                </customView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="X9c-Nr-u6J">
+                    <rect key="frame" x="0.0" y="0.0" width="1200" height="48"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="7Iu-HP-bKc"/>
+                        <constraint firstAttribute="height" constant="48" id="Jg9-nO-01p"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="X9c-Nr-u6J" firstAttribute="leading" secondItem="lQu-L0-920" secondAttribute="leading" id="41V-Mj-vk4"/>
+                <constraint firstAttribute="trailing" secondItem="8If-4a-voF" secondAttribute="trailing" constant="8" id="AJD-YW-uGo"/>
+                <constraint firstItem="J2Z-Th-6dn" firstAttribute="leading" secondItem="lQu-L0-920" secondAttribute="leading" id="CK1-FQ-peu"/>
+                <constraint firstAttribute="trailing" secondItem="J2Z-Th-6dn" secondAttribute="trailing" id="Dgf-cn-gCf"/>
+                <constraint firstItem="8If-4a-voF" firstAttribute="leading" secondItem="lQu-L0-920" secondAttribute="leading" constant="8" id="GR8-7g-dEg"/>
+                <constraint firstItem="zpO-I9-6SM" firstAttribute="leading" secondItem="lQu-L0-920" secondAttribute="leading" id="Go6-QP-mWq"/>
+                <constraint firstItem="X9c-Nr-u6J" firstAttribute="top" secondItem="J2Z-Th-6dn" secondAttribute="bottom" id="LeP-m4-n1j"/>
+                <constraint firstItem="zpO-I9-6SM" firstAttribute="top" secondItem="8If-4a-voF" secondAttribute="bottom" id="OvY-xG-YaH"/>
+                <constraint firstItem="8If-4a-voF" firstAttribute="top" secondItem="37o-iq-Ih9" secondAttribute="bottom" id="QjR-cZ-RPX"/>
+                <constraint firstItem="J2Z-Th-6dn" firstAttribute="top" secondItem="zpO-I9-6SM" secondAttribute="bottom" id="VEJ-3L-dBN"/>
+                <constraint firstAttribute="trailing" secondItem="zpO-I9-6SM" secondAttribute="trailing" id="aQI-h1-blP"/>
+                <constraint firstAttribute="bottom" secondItem="X9c-Nr-u6J" secondAttribute="bottom" id="axf-ys-xYO"/>
+                <constraint firstAttribute="trailing" secondItem="37o-iq-Ih9" secondAttribute="trailing" id="cMK-ZP-AWf"/>
+                <constraint firstItem="37o-iq-Ih9" firstAttribute="top" secondItem="lQu-L0-920" secondAttribute="top" id="dUJ-Nr-mxf"/>
+                <constraint firstItem="37o-iq-Ih9" firstAttribute="leading" secondItem="lQu-L0-920" secondAttribute="leading" id="uMT-EU-7rc"/>
+                <constraint firstAttribute="trailing" secondItem="X9c-Nr-u6J" secondAttribute="trailing" id="vnN-tC-UaO"/>
+            </constraints>
+            <point key="canvasLocation" x="-158" y="-182"/>
+        </view>
+    </objects>
+</document>

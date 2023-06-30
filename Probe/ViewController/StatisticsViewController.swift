@@ -6,9 +6,10 @@
 //
 
 import Cocoa
+import Combine
 
 class StatisticsViewController: BaseViewController {
-    private lazy var stackView: NSStackView = {
+    private lazy var taskStackView: NSStackView = {
         let view = NSStackView()
         view.alignment = .centerY
         view.spacing = 16
@@ -17,7 +18,7 @@ class StatisticsViewController: BaseViewController {
         return view
     }()
     
-    private lazy var progressLabel: NSTextField = {
+    private lazy var taskProgressLabel: NSTextField = {
         let view = NSTextField()
         view.isBordered = false
         view.isBezeled = false
@@ -27,27 +28,77 @@ class StatisticsViewController: BaseViewController {
         return view
     }()
     
-    private lazy var successCountLabel: NSTextField = {
+    private lazy var taskSuccessCountLabel: NSTextField = {
         let view = NSTextField()
         view.isBordered = false
         view.isBezeled = false
         view.isEditable = false
         view.backgroundColor = .clear
         view.alignment = .center
-        view.textColor = TemplateModel.State.success.color
+        view.textColor = ResultModel.State.success.color
         return view
     }()
     
-    private lazy var failedCountLabel: NSTextField = {
+    private lazy var taskFailedCountLabel: NSTextField = {
         let view = NSTextField()
         view.isBordered = false
         view.isBezeled = false
         view.isEditable = false
         view.backgroundColor = .clear
         view.alignment = .center
-        view.textColor = TemplateModel.State.failed.color
+        view.textColor = ResultModel.State.failed.color
         return view
     }()
+    
+    private lazy var caseStackView: NSStackView = {
+        let view = NSStackView()
+        view.alignment = .centerY
+        view.spacing = 16
+        view.orientation = .horizontal
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var caseProgressLabel: NSTextField = {
+        let view = NSTextField()
+        view.isBordered = false
+        view.isBezeled = false
+        view.isEditable = false
+        view.backgroundColor = .clear
+        view.alignment = .center
+        return view
+    }()
+    
+    private lazy var caseSuccessCountLabel: NSTextField = {
+        let view = NSTextField()
+        view.isBordered = false
+        view.isBezeled = false
+        view.isEditable = false
+        view.backgroundColor = .clear
+        view.alignment = .center
+        view.textColor = ResultModel.State.success.color
+        return view
+    }()
+    
+    private lazy var caseFailedCountLabel: NSTextField = {
+        let view = NSTextField()
+        view.isBordered = false
+        view.isBezeled = false
+        view.isEditable = false
+        view.backgroundColor = .clear
+        view.alignment = .center
+        view.textColor = ResultModel.State.failed.color
+        return view
+    }()
+    
+    private var sumCancellable: AnyCancellable?
+    private var finishedCountCancellable: AnyCancellable?
+    private var successCountCancellable: AnyCancellable?
+    private var failedCountCancellable: AnyCancellable?
+    
+    deinit {
+        
+    }
     
     override func loadView() {
         view = NSView()
@@ -57,13 +108,23 @@ class StatisticsViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stackView.addArrangedSubview(progressLabel)
-        stackView.addArrangedSubview(successCountLabel)
-        stackView.addArrangedSubview(failedCountLabel)
+        taskStackView.addArrangedSubview(taskProgressLabel)
+        taskStackView.addArrangedSubview(taskSuccessCountLabel)
+        taskStackView.addArrangedSubview(taskFailedCountLabel)
         
-        view.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
+        view.addSubview(taskStackView)
+        taskStackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+        }
+        
+        caseStackView.addArrangedSubview(caseProgressLabel)
+        caseStackView.addArrangedSubview(caseSuccessCountLabel)
+        caseStackView.addArrangedSubview(caseFailedCountLabel)
+        
+        view.addSubview(caseStackView)
+        caseStackView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
         }
         
@@ -72,22 +133,37 @@ class StatisticsViewController: BaseViewController {
             weakSelf?.update()
         }.disposed(by: disposeBag)
         
-        caseManager.templateModelSubject.subscribe { _ in
+        caseManager.runningTasksObservable.subscribe { _ in
             weakSelf?.update()
         }.disposed(by: disposeBag)
     }
     
     func update() {
-        guard let templateModels = caseManager.currentTestCase?.templateModels else { return }
+        taskProgressLabel.stringValue = "0/0"
+        taskSuccessCountLabel.stringValue = "0"
+        taskFailedCountLabel.stringValue = "0"
         
-        let totalCount = templateModels.count
-        let finishedTemplateModels = templateModels.filter { $0.state == .failed || $0.state == .success }
-        let finishedCount = finishedTemplateModels.count
-        let successTemplateModels = finishedTemplateModels.filter { $0.state == .success }
-        let successCount = successTemplateModels.count
+        updateCaseStatistics()
         
-        progressLabel.stringValue = "\(finishedCount)/\(totalCount)"
-        successCountLabel.stringValue = "\(successCount)"
-        failedCountLabel.stringValue = "\(finishedCount - successCount)"
+        guard let runningTask = caseManager.currentTestCase?.mostRencentRunningTask else { return }
+        
+        weak var weakSelf = self
+        sumCancellable = runningTask.$sum.sink { weakSelf?.taskProgressLabel.stringValue = "\(runningTask.finishedCount)/\($0)" }
+        finishedCountCancellable = runningTask.$finishedCount.sink {
+            weakSelf?.taskProgressLabel.stringValue = "\($0)/\(runningTask.sum)"
+            weakSelf?.updateCaseStatistics()
+        }
+        successCountCancellable = runningTask.$successCount.sink { weakSelf?.taskSuccessCountLabel.stringValue = "\($0)" }
+        failedCountCancellable = runningTask.$failedCount.sink { weakSelf?.taskFailedCountLabel.stringValue = "\($0)" }
+    }
+    
+    private func updateCaseStatistics() {
+        let successTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .success })
+        let failedTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .failed })
+        let successCount = successTemplates?.count ?? 0
+        let failedCount = failedTemplates?.count ?? 0
+        caseProgressLabel.stringValue = "\(successCount + failedCount)/\(caseManager.currentTestCase?.templates.count ?? 0)"
+        caseSuccessCountLabel.stringValue = "\(successCount)"
+        caseFailedCountLabel.stringValue = "\(failedCount)"
     }
 }

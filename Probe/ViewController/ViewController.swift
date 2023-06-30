@@ -11,61 +11,50 @@ import RxCocoa
 import SnapKit
 
 class ViewController: BaseViewController {
-    @IBOutlet weak var headerContainerView: NSView!
-    @IBOutlet weak var separator: NSView!
-    @IBOutlet weak var tableContainerView: NSView!
-    @IBOutlet weak var statisticsContainerView: NSView!
-    @IBOutlet weak var controlContainerView: NSView!
+    private lazy var caseWindowController = {
+        CaseWindowController()
+    }()
     
-    private lazy var headerViewController: HeaderViewController = {
-        let vc = HeaderViewController()
-        return vc
-    }()
-    private lazy var templateTableViewController: TemplateTableViewController = {
-        let vc = TemplateTableViewController()
-        return vc
-    }()
-    private lazy var statisticsViewController: StatisticsViewController = {
-        let vc = StatisticsViewController()
-        return vc
-    }()
-    private lazy var controlViewController: ControlViewController = {
-        weak var weakSelf = self
-        let vc = ControlViewController()
-        return vc
+    private lazy var stackView: NSStackView = {
+        let view = NSStackView()
+        view.alignment = .centerY
+        view.spacing = 16
+        view.orientation = .horizontal
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addChild(headerViewController)
-        headerContainerView.addSubview(headerViewController.view)
-        headerViewController.view.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
+        let buttonInfos = [
+            ("Show Case Window", #selector(onShowCaseWindow(_:))),
+        ]
+        
+        for buttonInfo in buttonInfos {
+            makeButton(buttonInfo)
         }
         
-        separator.wantsLayer = true
-        separator.layer?.backgroundColor = NSColor.gray.cgColor
-        
-        addChild(templateTableViewController)
-        tableContainerView.addSubview(templateTableViewController.view)
-        templateTableViewController.view.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
+        view.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
         }
-        
-        addChild(statisticsViewController)
-        statisticsContainerView.addSubview(statisticsViewController.view)
-        statisticsViewController.view.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
-        }
-        
-        addChild(controlViewController)
-        controlContainerView.addSubview(controlViewController.view)
-        controlViewController.view.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
-        }
-
-        AppContext.shared.caseManager.setup()
+    }
+    
+    @objc
+    private func onShowCaseWindow(_ sender: Any) {
+        caseWindowController.window?.center()
+        caseWindowController.window?.makeKeyAndOrderFront(nil)
+    }
+    
+    private func makeButton(_ buttonInfo: (title: String, selector: Selector)) {
+        let button = NSButton()
+        button.title = buttonInfo.title
+        button.bezelStyle = .rounded
+        button.target = self
+        button.action = buttonInfo.selector
+        stackView.addArrangedSubview(button)
     }
 }
 

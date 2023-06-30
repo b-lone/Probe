@@ -25,11 +25,8 @@ class ExportManager: NSObject {
         
         var fileContent = ""
         for templateModel in templateModels {
-            if templateModel.state == .failed {
-                fileContent += templateModel.id + "\n"
-            }
+            fileContent += "\(templateModel.id)" + "\n"
         }
-        
         do {
             try fileContent.write(to: filePath, atomically: true, encoding: .utf8)
             print("文件保存成功：\(filePath.path)")

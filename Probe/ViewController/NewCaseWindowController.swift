@@ -168,7 +168,7 @@ class NewCaseWindowController: NSWindowController, NSWindowDelegate {
     
     @objc func confirmButtonClicked() {
         let name = nameTextField.stringValue
-        if AppContext.shared.caseManager.caseModels.contains(where: { $0.name == name }) {
+        if AppContext.shared.caseManager.testCases.contains(where: { $0.name == name }) {
             let alert = NSAlert()
             alert.messageText = "名字重复"
             alert.informativeText = "请重新输入一个唯一的名字。"
@@ -179,9 +179,10 @@ class NewCaseWindowController: NSWindowController, NSWindowDelegate {
             return
         }
         
-        let ids = importManager.parseFile(importTextField.stringValue)
+        let ids = importManager.parseFile(importTextField.stringValue).map {($0 as NSString).longLongValue}
+        let testCase = TestCaseModel(name: nameTextField.stringValue, templateIds: ids)
         let templateModels = ids.map { id in
-            TemplateModel(id: id)
+            TemplateModel(id: id, caseIds: [testCase.id])
         }
         
         guard !templateModels.isEmpty else {
@@ -189,8 +190,7 @@ class NewCaseWindowController: NSWindowController, NSWindowDelegate {
             return
         }
         
-        let testCase = TestCaseModel(name: nameTextField.stringValue)
-        testCase.templateModels = templateModels
+        testCase.templates = templateModels
         
         AppContext.shared.caseManager.appendNewCase(testCase)
         

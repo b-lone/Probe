@@ -16,15 +16,10 @@ class RunningManager: NSObject, SocketManagerDelegate, LaunchManagerDelegate {
     
     private var needResendStartMessage = true
     
-    private var isRuning = false
-    private var isFinished: Bool {
-        if let templateModels = runningTestCase?.templateModels {
-            return !templateModels.contains {$0.state == .ready || $0.state == .inProgress}
-        }
-        return true
+    private var task: RunningTaskModel?
+    private var isRunning: Bool {
+        return task?.isRunning ?? false
     }
-    
-    private var runningTestCase: TestCaseModel?
     
     override init() {
         super.init()
@@ -34,101 +29,155 @@ class RunningManager: NSObject, SocketManagerDelegate, LaunchManagerDelegate {
     }
     
     func start(_ testCase: TestCaseModel) {
-        guard !isRuning else { return }
+        let templates = testCase.templates.filter { $0.mostRencentResult?.isFinished != true }
+        start(testCase, templates)
+    }
+    
+    func start(_ testCase: TestCaseModel, templateIndexs: [Int]) {
+        let models = templateIndexs.map{ testCase.templates[$0] }
+        start(testCase, models)
+    }
+    
+    func start(_ testCase: TestCaseModel, _ templates: [TemplateModel]) {
+        print("[Running]start(\(testCase.name),\(templates.count))")
+        guard !isRunning else { return }
         
-        isRuning = true
         needResendStartMessage = true
         
-        runningTestCase = testCase
+        let vidoOutputPath = AppContext.shared.fileManager.getVideoOutputPath(testCase)
+        let config = RunningTaskConfig(vidoOutputPath: vidoOutputPath)
         
-        launchManager.sendConfigMessage(testCase)
+        let task = RunningTaskModel(caseId: testCase.id, config: config, templateIds: templates.map({ $0.id }))
+
+        task.templates = templates
+        
+        task.update()
+        
+        caseManager.databaseManager.runningTaskTableManager.insert(task)
+        
+        testCase.runningTasks.append(task)
+        caseManager.runningTasks.append(task)
+
+        task.isRunning = true
+        self.task = task
+        
+        launchManager.sendConfigMessage(config.vidoOutputPath)
         socketManager.connectToServer()
         sendStartMessage()
     }
     
     func stop() {
-        isRuning = false
+        print("[Running][\(task?.id ?? 0)]Stop")
+        task?.isRunning = false
         socketManager.disconnectToServer()
     }
     
     private func finish() {
-        isRuning = false
+        print("[Running][\(task?.id ?? 0)]finish")
+        task?.isRunning = false
         socketManager.disconnectToServer()
     }
     
     private func sendStartMessage() {
+        print("[Running][\(task?.id ?? 0)]Try Send Start Message(needResendStartMessage:\(needResendStartMessage),isRunning:\(isRunning),isFinished:\(task?.isFinished ?? true))")
         guard needResendStartMessage,
-              isRuning,
-              !isFinished,
-              let templateModels = runningTestCase?.templateModels
+              let task = task,
+              isRunning,
+              !task.isFinished
         else { return }
         
         needResendStartMessage = false
-        let models = templateModels.filter{ $0.state == .ready }
+
+        let templates = task.templates.filter {
+            !$0.results.contains {
+                $0.taskId == task.id && $0.isFinished
+            }
+        }
         
-        socketManager.connectToServer()
-        socketManager.sendStartMessage(models)
+        socketManager.sendStartMessage(templates)
     }
     
     // MARK: - SocketManagerDelegate
     func onInProgress(_ message: [String : String]) {
-        if let id = message["id"], let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
-            templateModel.state = .inProgress
-            caseManager.update(templateModel)
+        if let id = (message["id"] as? NSString)?.longLongValue,
+           let task = task,
+           let result = caseManager.getResult(task.id, id) {
+            result.state = .inProgress
+            caseManager.databaseManager.resultTableManager.update(result)
         }
     }
     
     func onUpdate(_ message: [String : String]) {
-        if let id = message["id"], let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
-            templateModel.name = message["name"] ?? "unknown"
-            caseManager.update(templateModel)
+        if let id = (message["id"] as? NSString)?.longLongValue,
+           let task = task,
+           let template = task.templates.first(where: { $0.id == id }) {
+            template.name = message["name"] ?? "unknown"
+            template.sdkTag = (message["sdk_tag"] as? NSString)?.boolValue ?? false
+            template.usage = (message["show_c"] as? NSString)?.longLongValue ?? 0
+            template.clipCount = (message["clip_count"] as? NSString)?.longLongValue ?? 0
+            template.canReplaceClipCount = (message["can_replace_clip_count"] as? NSString)?.longLongValue ?? 0
+            template.previewUrl = message["preview_url"] ?? ""
+            template.coverUrl = message["cover"] ?? ""
+            template.downloadUrl = message["download_url"] ?? ""
+            caseManager.databaseManager.templateTableManager.update(template)
         }
     }
     
-    func onUseMontage(_ message: [String : String]) {
-        if let id = message["id"],
-           let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
-            templateModel.useMontage = (message["useMontage"] as? NSString)?.boolValue ?? false
-            templateModel.useMontageFlag = message["flag"]
+    func onMontageAbility(_ message: [String : String]) {
+        if let id = (message["id"] as? NSString)?.longLongValue,
+           let task = task,
+           let result = caseManager.getResult(task.id, id) {
+            result.montageAbility = (message["enable"] as? NSString)?.boolValue ?? false
+            result.montageAbilityFlag = message["flag"]
             
-            caseManager.update(templateModel, needSave: true)
+            caseManager.databaseManager.resultTableManager.update(result)
         }
     }
     
     func onFrameRenderingTime(_ message: [String : String]) {
-        if let id = message["id"],
-           let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
+        if let id = (message["id"] as? NSString)?.longLongValue,
+           let task = task,
+           let result = caseManager.getResult(task.id, id) {
             if let frameRenderingTime = message["frameRenderingTime"]?.toJsonObject(){
-                templateModel.frameRenderingTime.removeAll()
-                for (key, value) in frameRenderingTime {
-                    templateModel.frameRenderingTime[(key as NSString).longLongValue] = (value as NSString).longLongValue
+                for (postition, renderingTime) in frameRenderingTime {
+                    let model = FrameRenderingTimeModel(postition: (postition as NSString).longLongValue, renderingTime: (renderingTime as NSString).longLongValue, resultId: result.id)
+                    caseManager.databaseManager.frameRenderingTimeTableManager.insert(model)
+                    result.frameRenderingTimes.append(model)
                 }
+                caseManager.frameRenderingTimes += result.frameRenderingTimes
             }
-            
-            caseManager.update(templateModel, needSave: true)
         }
     }
     
     func onFinish(_ message: [String : String]) {
-        if let id = message["id"],
-           let success = (message["success"] as? NSString)?.boolValue,
-           let templateModel = runningTestCase?.templateModels.first(where: { $0.id == id }) {
-            templateModel.state = success ? .success : .failed
-            templateModel.startMemory = (message["startMemory"] as? NSString)?.integerValue ?? -1
-            templateModel.endMemory = (message["endMemory"] as? NSString)?.integerValue ?? -1
-            templateModel.maxMemory = (message["maxMemory"] as? NSString)?.integerValue ?? -1
-            templateModel.duration = (message["duration"] as? NSString)?.integerValue ?? -1
-            templateModel.errorMsg = message["error_msg"]
-            templateModel.filePath = message["file_path"]
+        if let id = (message["id"] as? NSString)?.longLongValue,
+           let task = task,
+           let result = caseManager.getResult(task.id, id),
+           let success = (message["success"] as? NSString)?.boolValue {
+            result.state = success ? .success : .failed
+            result.useMontage = (message["useMontage"]  as? NSString)?.boolValue ?? false
+            result.startMemory = (message["startMemory"] as? NSString)?.longLongValue ?? -1
+            result.endMemory = (message["endMemory"] as? NSString)?.longLongValue ?? -1
+            result.maxMemory = (message["maxMemory"] as? NSString)?.longLongValue ?? -1
+            result.duration = (message["duration"] as? NSString)?.longLongValue ?? -1
+            result.errorMsg = message["error_msg"]
+            result.filePath = message["file_path"]
             
-            caseManager.update(templateModel, needSave: true)
+            caseManager.databaseManager.resultTableManager.update(result)
             
-            if isFinished {
+            if task.isFinished {
                 finish()
             }
             
             if success {
-                launchManager.sendDownloadMessage(templateModel)
+                task.successCount += 1
+            } else {
+                task.failedCount += 1
+            }
+            task.finishedCount += 1
+            
+            if success, let filePath = result.filePath {
+                launchManager.sendDownloadMessage(result.templateId, filePath: filePath)
             } else {
                 socketManager.sendEndMessage()
             }
@@ -136,27 +185,43 @@ class RunningManager: NSObject, SocketManagerDelegate, LaunchManagerDelegate {
     }
     
     func onConnect() {
-        guard isRuning else { return }
+        guard isRunning else { return }
         sendStartMessage()
     }
     
     func onDisconnect() {
-        guard isRuning else { return }
+        guard let task = task, isRunning else { return }
         needResendStartMessage = true
         
-        if let inProgressTemplateModels = runningTestCase?.templateModels.filter({ $0.state == .inProgress }) {
-            inProgressTemplateModels.forEach {
-                $0.state = .failed
-                $0.errorMsg = "crash"
-                self.caseManager.update($0)
-            }
+        let results = task.results.filter({ $0.state == .inProgress })
+        for result in results {
+            result.state = .failed
+            result.errorMsg = "crash"
+            caseManager.databaseManager.resultTableManager.update(result)
         }
+        task.failedCount += results.count
+        task.finishedCount += results.count
         
-        if isFinished {
+        if task.isFinished {
             finish()
         } else {
             launchManager.sendLaunchMessage()
         }
+    }
+    
+    func onTimeout() {
+        guard let task = task, isRunning else { return }
+        
+        let results = task.results.filter({ $0.state == .inProgress })
+        for result in results {
+            result.state = .failed
+            result.errorMsg = "timeout"
+            caseManager.databaseManager.resultTableManager.update(result)
+        }
+        task.failedCount += results.count
+        task.finishedCount += results.count
+        
+        socketManager.sendEndMessage()
     }
     
     // MARK: - LaunchManagerDelegate

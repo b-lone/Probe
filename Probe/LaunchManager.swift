@@ -18,8 +18,8 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     private var date: Date?
     weak var delegate: LaunchManagerDelegate?
     
-    func sendConfigMessage(_ testCase: TestCaseModel) {
-        let message = "{config:\(LocalFileManager.shared.getVideoOutputPath(testCase))}"
+    func sendConfigMessage(_ vidoOutputPath: String) {
+        let message = "{config:\(vidoOutputPath)}"
         write(message)
     }
     
@@ -32,9 +32,8 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
         write(message)
     }
     
-    func sendDownloadMessage(_ template: TemplateModel) {
-        guard let filePath = template.filePath else { return }
-        let message = "{download:\(template.id)&\(filePath)}"
+    func sendDownloadMessage(_ templateId: Int64, filePath: String) {
+        let message = "{download:\(templateId)&\(filePath)}"
         write(message)
     }
     
@@ -45,7 +44,7 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     
     private func write(_ message: String) {
         if clientSocket.isConnected {
-            print(message)
+            print("[Socket][helper]Write:\(message)")
             clientSocket.write(message.data(using: .utf8), withTimeout: -1, tag: 0)
         } else {
             if !messagesToSend.contains(message) {
@@ -67,9 +66,9 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     private func connectToServer() {
         do {
             try clientSocket.connect(toHost: "localhost", onPort: 1234)
-            print("Connected to server")
+            print("[Socket][helper]Connected to server")
         } catch {
-            print("Error connecting to server: \(error)")
+            print("[Socket][helper]Error connecting to server: \(error)")
         }
     }
     
@@ -96,7 +95,7 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        print("launch didConnectToHost")
+        print("[Socket][helper]Did Connect")
         
         sock.readData(withTimeout: -1, tag: 0)
        
@@ -107,14 +106,13 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        print("launch socketDidDisconnect:\(String(describing: err))")
+        print("[Socket][helper]Did Disconnect:\(String(describing: err))")
         date = nil
     }
     
     func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
         var jsonStrings = [String]()
         if let dataString = String(data: data, encoding: .utf8) {
-            print("launch didRead:\(tag) \(dataString)")
             let jsonComponents = dataString.components(separatedBy: "}{")
             for component in jsonComponents {
                 var jsonString = component
@@ -130,7 +128,7 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
         
         for jsonString in jsonStrings {
             let commandAndParamter = extractCommandAndParameter(from: jsonString)
-            
+            print("[Socket][helper]Did Read:\(commandAndParamter)")
             if commandAndParamter.command == "launch fininsh" {
                 date = nil
             } else if commandAndParamter.command == "download finish", let parameter = commandAndParamter.parameter {
@@ -144,6 +142,6 @@ class LaunchManager: NSObject, GCDAsyncSocketDelegate {
     }
     
     func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
-        print("launch didWriteDataWithTag:\(tag)")
+        print("[Socket][helper]Did Write")
     }
 }

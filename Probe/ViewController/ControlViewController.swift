@@ -10,7 +10,9 @@ import SnapKit
 
 class ControlViewController: BaseViewController {
     private var exportManager = ExportManager()
-    private var runningManager = RunningManager()
+    private var runningManager: RunningManager {
+        AppContext.shared.runningManager
+    }
     
     private lazy var stackView: NSStackView = {
         let view = NSStackView()
@@ -37,8 +39,9 @@ class ControlViewController: BaseViewController {
             ("Stop", #selector(onStop(_:))),
             ("Export", #selector(onExport(_:))),
             ("Export Failed IDs", #selector(onExportFailedIds(_:))),
-            ("Reset", #selector(onReset(_:))),
             ("Delete", #selector(onDelete(_:))),
+            ("Reveal in Finder", #selector(onRevealInFinder(_:))),
+            ("Reload", #selector(onReload(_:))),
         ]
         
         for buttonInfo in buttonInfos {
@@ -76,35 +79,38 @@ class ControlViewController: BaseViewController {
     
     @objc
     private func onStop(_ sender: Any) {
-        guard let currentTestCase = caseManager.currentTestCase else { return }
-        runningManager.start(currentTestCase)
+        runningManager.stop()
     }
     
     @objc
     private func onExport(_ sender: Any) {
-        if let templateModels = caseManager.currentTestCase?.templateModels {
+        if let templateModels = caseManager.currentTestCase?.templates {
             exportManager.exprot(templateModels)
         }
     }
     
     @objc
     private func onExportFailedIds(_ sender: Any) {
-        if let templateModels = caseManager.currentTestCase?.templateModels {
+        if let templateModels = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .failed }) {
             exportManager.exportFailedIds(templateModels)
         }
     }
     
     @objc
-    private func onReset(_ sender: Any) {
-        guard let currentTestCase = caseManager.currentTestCase else { return }
-        let templateModels = currentTestCase.templateModels.map { TemplateModel(id: $0.id) }
-        currentTestCase.templateModels = templateModels
-        caseManager.reset(currentTestCase)
+    private func onDelete(_ sender: Any) {
+        guard let testCase = caseManager.currentTestCase else { return }
+        caseManager.delete(testCase)
     }
     
     @objc
-    private func onDelete(_ sender: Any) {
-        guard let currentTestCase = caseManager.currentTestCase else { return }
-        caseManager.delete(currentTestCase)
+    private func onRevealInFinder(_ sender: Any) {
+        let fileURL = URL(fileURLWithPath: AppContext.shared.fileManager.rootPath)
+            
+        NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+    }
+    
+    @objc
+    private func onReload(_ sender: Any) {
+        NotificationCenter.default.post(name: NSNotification.Name("Reload"), object: self)
     }
 }

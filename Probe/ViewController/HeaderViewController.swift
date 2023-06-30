@@ -11,7 +11,6 @@ import RxSwift
 import SnapKit
 
 class HeaderViewController: BaseViewController, NSComboBoxDelegate, NSComboBoxDataSource {
-    
     private lazy var comboBox: NSComboBox = {
         let view = NSComboBox()
         view.usesDataSource = true
@@ -46,11 +45,11 @@ class HeaderViewController: BaseViewController, NSComboBoxDelegate, NSComboBoxDa
     }
     
     func numberOfItems(in comboBox: NSComboBox) -> Int {
-        return caseManager.caseModels.count
+        return caseManager.testCases.count
     }
     
     func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
-        return caseManager.caseModels[index].name
+        return caseManager.testCases[index].name
     }
     
     func comboBoxSelectionDidChange(_ notification: Notification) {
