@@ -101,48 +101,49 @@ class TemplateTableViewController: BaseViewController, NSTableViewDelegate, NSTa
         textField.backgroundColor = .clear
         textField.alignment = .center
         
+        weak var weakTextField = textField
         if columnIdentifier.rawValue == "id" {
-            textField.cancellable = model.$id.sink { textField.stringValue = "\($0)" }
+            textField.cancellable = model.$id.sink { weakTextField?.stringValue = "\($0)" }
         } else if columnIdentifier.rawValue == "name" {
-            textField.cancellable = model.$name.sink { textField.stringValue = $0 }
+            textField.cancellable = model.$name.sink { weakTextField?.stringValue = $0 }
         } else if columnIdentifier.rawValue == "sdk tag" {
-            textField.cancellable = model.$sdkTag.sink { textField.stringValue = "\($0)" }
+            textField.cancellable = model.$sdkTag.sink { weakTextField?.stringValue = "\($0)" }
         } else if columnIdentifier.rawValue == "usage" {
-            textField.cancellable = model.$usage.sink { textField.stringValue = "\($0)" }
+            textField.cancellable = model.$usage.sink { weakTextField?.stringValue = "\($0)" }
         } else if columnIdentifier.rawValue == "clip count" {
-            textField.cancellable = model.$clipCount.sink { textField.stringValue = "\($0)" }
+            textField.cancellable = model.$clipCount.sink { weakTextField?.stringValue = "\($0)" }
         } else if columnIdentifier.rawValue == "can replace clip count" {
-            textField.cancellable = model.$canReplaceClipCount.sink { textField.stringValue = "\($0)" }
+            textField.cancellable = model.$canReplaceClipCount.sink { weakTextField?.stringValue = "\($0)" }
         } else if columnIdentifier.rawValue == "preview url" {
-            textField.cancellable = model.$previewUrl.sink { textField.stringValue = $0 }
+            textField.cancellable = model.$previewUrl.sink { weakTextField?.stringValue = $0 }
         } else if columnIdentifier.rawValue == "cover url" {
-            textField.cancellable = model.$coverUrl.sink { textField.stringValue = $0 }
+            textField.cancellable = model.$coverUrl.sink { weakTextField?.stringValue = $0 }
         } else if columnIdentifier.rawValue == "download url" {
-            textField.cancellable = model.$downloadUrl.sink { textField.stringValue = $0 }
+            textField.cancellable = model.$downloadUrl.sink { weakTextField?.stringValue = $0 }
         } else if let result = model.mostRencentResult {
             if columnIdentifier.rawValue == "state" {
                 textField.cancellable = result.$state.sink {
-                    textField.stringValue = "\($0)"
-                    textField.textColor = $0.color
+                    weakTextField?.stringValue = "\($0)"
+                    weakTextField?.textColor = $0.color
                 }
             } else if columnIdentifier.rawValue == "use montage" {
-                textField.cancellable = result.$useMontage.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$useMontage.sink { weakTextField?.stringValue = "\($0)" }
             } else if columnIdentifier.rawValue == "montage ability" {
-                textField.cancellable = result.$montageAbility.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$montageAbility.sink { weakTextField?.stringValue = "\($0)" }
             } else if columnIdentifier.rawValue == "start memory" {
-                textField.cancellable = result.$startMemory.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$startMemory.sink { weakTextField?.stringValue = "\($0)" }
             } else if columnIdentifier.rawValue == "end memory" {
-                textField.cancellable = result.$endMemory.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$endMemory.sink { weakTextField?.stringValue = "\($0)" }
             } else if columnIdentifier.rawValue == "max memory" {
-                textField.cancellable = result.$maxMemory.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$maxMemory.sink { weakTextField?.stringValue = "\($0)" }
             } else if columnIdentifier.rawValue == "duration" {
-                textField.cancellable = result.$duration.sink { textField.stringValue = "\($0)" }
+                textField.cancellable = result.$duration.sink { weakTextField?.stringValue = "\($0)" }
             }  else if columnIdentifier.rawValue == "rendering" {
-                textField.cancellable = result.$frameRenderingTimes.sink { _ in textField.stringValue = "\(result.longRenderingTimeFrameCount)" }
+                textField.cancellable = result.$frameRenderingTimes.sink { _ in weakTextField?.stringValue = "\(result.longRenderingTimeFrameCount)" }
             } else if columnIdentifier.rawValue == "error" {
-                textField.cancellable = result.$errorMsg.sink { textField.stringValue = $0 ?? "-" }
+                textField.cancellable = result.$errorMsg.sink { weakTextField?.stringValue = $0 ?? "-" }
             } else if columnIdentifier.rawValue == "filepath" {
-                textField.cancellable = result.$filePath.sink { textField.stringValue = $0 ?? "-" }
+                textField.cancellable = result.$filePath.sink { weakTextField?.stringValue = $0 ?? "-" }
             }
         } else {
             textField.stringValue = "-"
