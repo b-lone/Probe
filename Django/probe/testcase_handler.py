@@ -17,12 +17,16 @@ def testcase(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            name = data['name']
-            template_ids = data.get('template_ids', [])
 
-            model = TestCase(name=name)
+            model = TestCase()
+
+            name = data['name']
+            if name is not None:
+                model.name = name
+
             model.save()
 
+            template_ids = data.get('template_ids', [])
             for template_id in template_ids:
                 try:
                     template = Template.objects.get(id=template_id)

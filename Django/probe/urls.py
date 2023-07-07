@@ -20,6 +20,7 @@ from . import views
 from . import testcase_handler
 from . import template_handler
 from . import task_handler
+from . import result_handler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +30,6 @@ urlpatterns = [
     path('templates/', template_handler.templates, name='templates'),
     path('task/', task_handler.task, name='task'),
     path('tasks/', task_handler.tasks, name='tasks'),
+    path('result/', result_handler.result, name='result'),
+    path('results/', result_handler.results, name='results'),
 ]

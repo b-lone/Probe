@@ -13,9 +13,13 @@ def task(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            sum = data['sum']
 
-            model = Task(sum=sum)
+            model = Task()
+
+            sum = data['sum']
+            if sum is not None:
+                model.sum = sum
+            
             model.save()
                 
             return JsonResponse(convert_task_to_json(model), safe=False)
@@ -68,7 +72,7 @@ def task(request):
             return JsonResponse({'error': 'Model not found'}, status=404)
         
         model.delete()
-        
+
         return JsonResponse({'message': 'Model deleted successfully'})
     
     else:

@@ -44,7 +44,7 @@ class Result(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
-    result = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     template = models.ForeignKey(Template, on_delete=models.CASCADE)
 
 class FrameRenderingTime(models.Model):
