@@ -21,6 +21,7 @@ from . import testcase_handler
 from . import template_handler
 from . import task_handler
 from . import result_handler
+from . import frame_rendering_time_handler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,4 +33,6 @@ urlpatterns = [
     path('tasks/', task_handler.tasks, name='tasks'),
     path('result/', result_handler.result, name='result'),
     path('results/', result_handler.results, name='results'),
+    path('frt/', frame_rendering_time_handler.frame_rendering_time, name='frt'),
+    path('frts/', frame_rendering_time_handler.frame_rendering_times, name='frts'),
 ]

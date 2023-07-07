@@ -41,7 +41,7 @@ def task(request):
 
             model.save()
     
-            return JsonResponse(convert_task_to_json(test_case), safe=False)
+            return JsonResponse(convert_task_to_json(model), safe=False)
         except KeyError:
             return JsonResponse({'message': 'Invalid JSON format: Missing required field'}, status=400)
         except Task.DoesNotExist:

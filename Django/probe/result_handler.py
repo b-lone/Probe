@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from .models import *
 
 def convert_result_to_json(model):
-    result_dict = {
+    dict = {
         'id': model.id,
         'state': model.state,
         'use_montage': model.use_montage,
@@ -20,7 +20,7 @@ def convert_result_to_json(model):
         'template_id': model.template.id,
         'task_id': model.task.id,
     }
-    return result_dict
+    return dict
 
 
 def result(request):
