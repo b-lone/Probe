@@ -2,36 +2,23 @@ import json
 from django.http import JsonResponse
 from .models import *
 
-def convert_testcase_to_json(model):
-    template_ids = model.templates.values_list('id', flat=True)
+def convert_task_to_json(model):
     dict = {
         'id': model.id,
-        'name': model.name,
-        'created_at': model.created_at,
-        'last_modified': model.last_modified,
-        'template_ids': list(template_ids),
+        'sum': model.sum,
     }
     return dict
 
-def testcase(request):
+def task(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            name = data['name']
-            template_ids = data.get('template_ids', [])
+            sum = data['sum']
 
-            model = TestCase(name=name)
+            model = Task(sum=sum)
             model.save()
-
-            for template_id in template_ids:
-                try:
-                    template = Template.objects.get(id=template_id)
-                except Template.DoesNotExist:
-                    template = Template(id=template_id)
-                    template.save()
-                model.templates.add(template)
                 
-            return JsonResponse(convert_testcase_to_json(model), safe=False)
+            return JsonResponse(convert_task_to_json(model), safe=False)
         except KeyError:
             return JsonResponse({'message': 'Invalid JSON format: Missing required field'}, status=400)
         except Exception as e:
@@ -41,45 +28,34 @@ def testcase(request):
         try:
             data = json.loads(request.body)
             id = data['id']
+
+            model = Task.objects.get(id=id)
             
-            model = TestCase.objects.get(id=id)
-            
-            name = data.get('name')
-            template_ids = data.get('template_ids', [])
-    
-            if name:
-                model.name = name
-            if template_ids:
-                model.templates.clear()
-                for template_id in template_ids:
-                    try:
-                        template = Template.objects.get(id=template_id)
-                    except Template.DoesNotExist:
-                        template = Template(id=template_id)
-                        template.save()
-                    model.templates.add(template)
-    
+            sum = data.get('sum')
+            if sum:
+                model.sum = sum
+
             model.save()
     
-            return JsonResponse(convert_testcase_to_json(model), safe=False)
+            return JsonResponse(convert_task_to_json(test_case), safe=False)
         except KeyError:
             return JsonResponse({'message': 'Invalid JSON format: Missing required field'}, status=400)
-        except TestCase.DoesNotExist:
+        except Task.DoesNotExist:
                 return JsonResponse({'error': 'Model not found'}, status=404)
         except Exception as e:
             return JsonResponse({'message': f'Error creating model: {str(e)}'}, status=500)
-        
+    
     elif request.method == 'GET':
         id = request.GET.get('id')
         if not id:
             return JsonResponse({'error': 'ID is required'}, status=400)
         
         try:
-            model = TestCase.objects.get(id=id)
-        except TestCase.DoesNotExist:
+            model = Task.objects.get(id=id)
+        except Task.DoesNotExist:
             return JsonResponse({'error': 'Model not found'}, status=404)
         
-        return JsonResponse(convert_testcase_to_json(model))
+        return JsonResponse(convert_task_to_json(model))
     
     elif request.method == 'DELETE':
         id = request.GET.get('id')
@@ -87,25 +63,24 @@ def testcase(request):
             return JsonResponse({'error': 'ID is required'}, status=400)
         
         try:
-            model = TestCase.objects.get(id=id)
-        except TestCase.DoesNotExist:
+            model = Task.objects.get(id=id)
+        except Task.DoesNotExist:
             return JsonResponse({'error': 'Model not found'}, status=404)
         
         model.delete()
-
+        
         return JsonResponse({'message': 'Model deleted successfully'})
     
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
     
-def testcases(request):
+def tasks(request):
     if request.method == 'GET':
-        models = TestCase.objects.all()
+        models = Task.objects.all()
         json_list = []
         for model in models:
-            json_list.append(convert_testcase_to_json(model))
-
+            json_list.append(convert_task_to_json(model))
         return JsonResponse(json_list, safe=False)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)

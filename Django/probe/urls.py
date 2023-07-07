@@ -19,6 +19,7 @@ from django.urls import path
 from . import views
 from . import testcase_handler
 from . import template_handler
+from . import task_handler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +27,6 @@ urlpatterns = [
     path('testcases/', testcase_handler.testcases, name='testcases'),
     path('template/', template_handler.template, name='template'),
     path('templates/', template_handler.templates, name='templates'),
+    path('task/', task_handler.task, name='task'),
+    path('tasks/', task_handler.tasks, name='tasks'),
 ]
