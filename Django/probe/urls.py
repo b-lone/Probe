@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from . import testcase_handler
+from . import template_handler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('testcase/', testcase_handler.testcase, name='testcase'),
     path('testcases/', testcase_handler.testcases, name='testcases'),
+    path('template/', template_handler.template, name='template'),
+    path('templates/', template_handler.templates, name='templates'),
 ]

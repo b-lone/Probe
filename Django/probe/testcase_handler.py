@@ -1,7 +1,6 @@
 import json
 from django.http import JsonResponse
 from .models import *
-from django.core.serializers import serialize
 
 def convert_testcase_to_json(test_case):
     template_ids = test_case.templates.values_list('id', flat=True)
@@ -75,6 +74,9 @@ def testcase(request):
     
     elif request.method == 'DELETE':
         id = request.GET.get('id')
+        if not id:
+            return JsonResponse({'error': 'ID is required'}, status=400)
+        
         try:
             test_case = TestCase.objects.get(id=id)
         except TestCase.DoesNotExist:
@@ -95,4 +97,4 @@ def testcases(request):
             test_case_list.append(convert_testcase_to_json(test_case))
         return JsonResponse(test_case_list, safe=False)
     else:
-         return JsonResponse({'error': 'Invalid request method'}, status=405)
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
