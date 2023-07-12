@@ -72,6 +72,24 @@ extension TemplateModel {
     var mostRencentResult: ResultModel? {
         return results.filter({ $0.state != .ready }).max { $0.id < $1.id }
     }
+    
+    func mostRencentResult(in testCase: TestCaseModel) -> ResultModel? {
+        let results = results.filter{ result in
+            testCase.runningTasks.contains { $0.id ==  result.taskId }
+        }
+        return results.filter({ $0.state != .ready }).max { $0.id < $1.id }
+    }
+    
+    func isFinish(in testCase: TestCaseModel) -> Bool {
+        let results = results.filter{ result in
+            testCase.runningTasks.contains { $0.id ==  result.taskId }
+        }
+        
+        if let mostRecentResult = results.max(by: { $0.id < $1.id }) {
+            return mostRecentResult.isFinished
+        }
+        return false
+    }
 }
 
 extension TemplateModel {

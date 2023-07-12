@@ -29,7 +29,7 @@ class RunningManager: NSObject, SocketManagerDelegate, LaunchManagerDelegate {
     }
     
     func start(_ testCase: TestCaseModel) {
-        let templates = testCase.templates.filter { $0.mostRencentResult?.isFinished != true }
+        let templates = testCase.templates.filter { !$0.isFinish(in: testCase) }
         start(testCase, templates)
     }
     

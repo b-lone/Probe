@@ -158,8 +158,9 @@ class StatisticsViewController: BaseViewController {
     }
     
     private func updateCaseStatistics() {
-        let successTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .success })
-        let failedTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .failed })
+        guard let testCase = caseManager.currentTestCase else { return }
+        let successTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult(in: testCase)?.state == .success })
+        let failedTemplates = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult(in: testCase)?.state == .failed })
         let successCount = successTemplates?.count ?? 0
         let failedCount = failedTemplates?.count ?? 0
         caseProgressLabel.stringValue = "\(successCount + failedCount)/\(caseManager.currentTestCase?.templates.count ?? 0)"

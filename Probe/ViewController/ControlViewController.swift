@@ -91,7 +91,7 @@ class ControlViewController: BaseViewController {
     
     @objc
     private func onExportFailedIds(_ sender: Any) {
-        if let templateModels = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult?.state == .failed }) {
+        if let testCase = caseManager.currentTestCase, let templateModels = caseManager.currentTestCase?.templates.filter({ $0.mostRencentResult(in: testCase)?.state == .failed }) {
             exportManager.exportFailedIds(templateModels)
         }
     }

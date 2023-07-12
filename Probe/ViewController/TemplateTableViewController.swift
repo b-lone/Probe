@@ -90,8 +90,10 @@ class TemplateTableViewController: BaseViewController, NSTableViewDelegate, NSTa
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let columnIdentifier = tableColumn?.identifier,
-              let model = caseManager.currentTestCase?.templates[row]
+              let testCase = caseManager.currentTestCase
         else { return nil }
+        
+        let model = testCase.templates[row]
         
         let textField = CancellableTextField()
         
@@ -120,7 +122,7 @@ class TemplateTableViewController: BaseViewController, NSTableViewDelegate, NSTa
             textField.cancellable = model.$coverUrl.sink { weakTextField?.stringValue = $0 }
         } else if columnIdentifier.rawValue == "download url" {
             textField.cancellable = model.$downloadUrl.sink { weakTextField?.stringValue = $0 }
-        } else if let result = model.mostRencentResult {
+        } else if let result = model.mostRencentResult(in: testCase) {
             if columnIdentifier.rawValue == "state" {
                 textField.cancellable = result.$state.sink {
                     weakTextField?.stringValue = "\($0)"
